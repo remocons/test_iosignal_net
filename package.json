@@ -1,0 +1,17 @@
+{
+  "name": "net_iosignal_client",
+  "version": "1.0.0",
+  "description": "ws and wss connectable http iosignal client.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "./upload.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "iosignal": "^1.4.2"
+  }
+}
