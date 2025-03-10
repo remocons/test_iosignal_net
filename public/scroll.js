@@ -36,6 +36,7 @@ let robotChannel = '#robot'
 
 buttonUp.addEventListener('click', () => {
   io.signal(robotChannel, 'u')
+  console.log('click up', robotChannel)
 })
 
 buttonLeft.addEventListener('click', () => {
