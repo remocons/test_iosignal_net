@@ -1,0 +1,64 @@
+{
+  "name": "IOSignal App",
+  "short_name": "IOSignal",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A IOSignal app.",
+  "icons": [
+
+    {
+      "src": "windows11/Square44x44Logo.scale-100.png",
+      "sizes": "44x44"
+    },
+    {
+      "src": "windows11/Square44x44Logo.scale-125.png",
+      "sizes": "55x55"
+    },
+    {
+      "src": "windows11/Square44x44Logo.scale-150.png",
+      "sizes": "66x66"
+    },
+    {
+      "src": "windows11/Square44x44Logo.scale-200.png",
+      "sizes": "88x88"
+    },
+    {
+      "src": "windows11/Square44x44Logo.scale-400.png",
+      "sizes": "176x176"
+    },
+    {
+      "src": "windows11/StoreLogo.scale-100.png",
+      "sizes": "50x50"
+    },
+    {
+      "src": "windows11/StoreLogo.scale-125.png",
+      "sizes": "63x63"
+    },
+    {
+      "src": "windows11/StoreLogo.scale-150.png",
+      "sizes": "75x75"
+    },
+    {
+      "src": "windows11/StoreLogo.scale-200.png",
+      "sizes": "100x100"
+    },
+    {
+      "src": "windows11/StoreLogo.scale-400.png",
+      "sizes": "200x200"
+    },
+    
+    {
+      "src": "android/android-launchericon-512-512.png",
+      "sizes": "512x512"
+    },
+    
+    {
+      "src": "ios/512.png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "ios/1024.png",
+      "sizes": "1024x1024"
+    }
+  ]
+}
