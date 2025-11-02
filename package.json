@@ -12,6 +12,6 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "iosignal": "^3.1.0"
+    "iosignal": "file:../_iosignal"
   }
 }

@@ -111,20 +111,20 @@ io.on('ready', () => {
   ui_message.hidden = false
   connectButton.disabled = true
   ui("#io_ready", 800);
-
+  io.subscribe(channelTag)
 })
 
-io.listen(channelTag, onMessage)
+io.on('message', onMessage)
 
-function onMessage(...args) {
-  console.log(args[0], typeof args[0]) // message 
+function onMessage(tag, ...args) {
+  console.log('tag', tag, 'args', args ) // message 
   let isBuffer = IO.Buffer.isBuffer(args[0])
   if (isBuffer) {
     let buf = args[0]
     console.log('buffer', buf.toString('hex'))
   }
 
-  let msg = JSON.stringify(args)
+  let msg = args
   let p = document.createElement('article')
   p.textContent = "🕑 " + String(Date.now() - beginAt) + " " + msg
   let v = document.querySelector('#messageView')
@@ -159,10 +159,6 @@ for (const b of sendButtons) {
 
 
 io.on('@', onMessage)
-
-io.on('text_message', data => {
-  console.log(data)
-})
 
 let motor_pwm = new IO.Buffer.alloc(4)
 
