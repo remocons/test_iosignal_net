@@ -1,7 +1,8 @@
 
 let url = 'wss://io.iosignal.net/ws'
 let io = new IO()
-let channelTag = '#homeButton'
+let tag = '#homeButton'
+let robotChannel = '#robot'
 
 
 let beginWith = document.location.hostname.split('.')[0]
@@ -32,9 +33,9 @@ for (const m of urls) {
 
 }
 
-let robotChannel = '#robot'
 
 buttonUp.addEventListener('click', () => {
+  console.log('click u')
   io.signal(robotChannel, 'u')
 })
 
@@ -105,6 +106,7 @@ io.on('error', (e) => {
 
 
 io.on('ready', () => {
+  console.log('ready cid.', io.cid )
   ioCID.innerText = io.cid
   ioURL.innerText = io.url
   ui_send.hidden = false
@@ -121,8 +123,19 @@ function onMessage(tag, ...args) {
   let isBuffer = IO.Buffer.isBuffer(args[0])
   if (isBuffer) {
     let buf = args[0]
-    console.log('buffer', buf.toString('hex'))
+    console.log('buffer data', buf.toString('hex'))
+    msg = `tag: ${tag} msg: ${buf.toString('hex')}`
+  }else{
+    msg = `tag: ${tag} msg: ${args}`
   }
+    let p = document.createElement('article')
+    p.textContent = "🕑 " + String(Date.now() - beginAt) + " " + msg
+    let v = document.querySelector('#messageView')
+    if (v.childElementCount > 3) {
+      v.removeChild(v.lastElementChild)
+    }
+    v.prepend(p)
+    toggleLightBulb();
 
   let msg = args
   let p = document.createElement('article')
@@ -178,7 +191,7 @@ m2b.addEventListener('input', e => {
 
 function setMotorPWM(index, value) {
   motor_pwm[index] = value
-  console.log(Array.from(motor_pwm))
+  // console.log(Array.from(motor_pwm))
   io.signal(robotChannel, motor_pwm)
 }
 
