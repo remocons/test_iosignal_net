@@ -1,7 +1,7 @@
 
 let url = 'wss://io.iosignal.net/ws'
 let io = new IO()
-let tag = '#homeButton'
+let buttonChannel = '#homeButton'
 let robotChannel = '#robot'
 
 
@@ -113,13 +113,14 @@ io.on('ready', () => {
   ui_message.hidden = false
   connectButton.disabled = true
   ui("#io_ready", 800);
-  io.subscribe(channelTag)
+  io.subscribe(buttonChannel + "," + robotChannel)
 })
 
 io.on('message', onMessage)
 
 function onMessage(tag, ...args) {
   console.log('tag', tag, 'args', args ) // message 
+  let msg;
   let isBuffer = IO.Buffer.isBuffer(args[0])
   if (isBuffer) {
     let buf = args[0]
@@ -128,16 +129,7 @@ function onMessage(tag, ...args) {
   }else{
     msg = `tag: ${tag} msg: ${args}`
   }
-    let p = document.createElement('article')
-    p.textContent = "🕑 " + String(Date.now() - beginAt) + " " + msg
-    let v = document.querySelector('#messageView')
-    if (v.childElementCount > 3) {
-      v.removeChild(v.lastElementChild)
-    }
-    v.prepend(p)
-    toggleLightBulb();
 
-  let msg = args
   let p = document.createElement('article')
   p.textContent = "🕑 " + String(Date.now() - beginAt) + " " + msg
   let v = document.querySelector('#messageView')
