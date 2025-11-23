@@ -1,4 +1,6 @@
 
+console.log(IO.version)
+
 let url = 'wss://io.iosignal.net/ws'
 let io = new IO()
 let buttonChannel = '#homeButton'
