@@ -1,3 +1,4 @@
+import * as meta_buffer_pack from 'meta-buffer-pack';
 import * as boho from 'boho';
 import EventEmitter from 'eventemitter3';
 
@@ -80,6 +81,7 @@ declare class IOCore extends EventEmitter<string | symbol, any> {
      * @type {Boho}
      */
     boho: Boho$1;
+    serverTimeNonce: any;
     /**
      * Indicates if the connection is TLS (wss).
      * @type {boolean}
@@ -482,7 +484,7 @@ declare class IO extends IOCore {
     socket_send(data: BufferSource): void;
 }
 type Boho = boho.Boho;
-type MBP = any;
+type MBP = typeof meta_buffer_pack;
 type Buffer = boho.Buffer;
 
 export { IO as default };
