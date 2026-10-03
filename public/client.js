@@ -1,6 +1,6 @@
 import IO from 'iosignal/io';
 import { presets, boards, parseArgs, describeArgs, cidTags } from './lib/protocol.js';
-import { protocolSwitchURL, protocolSwitchBlocked, connectionAdvice } from './lib/connection.js';
+import { connectionAdvice } from './lib/connection.js';
 const $ = id => document.getElementById(id);
 $('ioVersion').textContent = `v${IO.version}`;
 let io, ready = false, paused = false, logs = [], activeTags = new Set(), currentPreset = "", resetControls = () => {};
@@ -135,31 +135,7 @@ function updateConnectionAdvice() {
   const advice = connectionAdvice(location.protocol, $('serverURL').value);
   $('connectionAdviceText').textContent = advice;
   $('connectionAdvice').hidden = !advice;
-  $('switchProtocolInline').hidden = !(location.protocol === 'https:' && advice);
-}
-function switchProtocol() {
-  const target = protocolSwitchURL(location.href);
-  stopMotor(); io?.destroy(); updateReady(false);
-  $('authKey').value = '';
-  location.assign(target);
 }
 $('pageProtocol').textContent = `${location.protocol === 'https:' ? 'HTTPS' : 'HTTP'} 접속 중`;
-$('switchProtocol').textContent = `${location.protocol === 'https:' ? 'HTTP' : 'HTTPS'}로 전환`;
-$('switchProtocol').onclick = () => attempt(switchProtocol);
-$('switchProtocolInline').onclick = () => attempt(switchProtocol);
 $('serverURL').addEventListener('input', updateConnectionAdvice);
 updateConnectionAdvice();
-
-if (protocolSwitchBlocked(location.href)) {
-  $('protocolFallback').hidden = false;
-  $('httpAddress').value = protocolSwitchURL(location.href);
-}
-$('copyHttpAddress').onclick = async () => {
-  try {
-    await navigator.clipboard.writeText($('httpAddress').value);
-    $('protocolCopyStatus').textContent = 'HTTP 주소를 복사했습니다. 브라우저 주소창에 붙여 넣어 접속하세요.';
-  } catch {
-    $('httpAddress').select();
-    $('protocolCopyStatus').textContent = '주소를 선택했습니다. 직접 복사하세요.';
-  }
-};
