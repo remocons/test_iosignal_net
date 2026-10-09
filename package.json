@@ -15,7 +15,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "iosignal": "7.1.0"
+    "iosignal": "7.2.0"
   },
   "engines": {
     "node": ">=22.12"
