@@ -2,6 +2,10 @@
 
 Arduino·웹·Node.js의 시그널을 연결하고 확인하는 오픈소스 범용 웹앱입니다. HTML/CSS/JavaScript로 구성하며, 계정 관리 서비스 없이 사용할 수 있습니다. 라이선스는 MIT입니다.
 
+<p align="center">
+  <img src="docs/assets/iosignal-ecosystem.png" alt="IOSignal로 연결되는 서버, CLI, Node.js, Arduino와 원격 제어 웹앱" width="720" />
+</p>
+
 ## 실행
 
 Node.js 22.12 이상이 필요합니다.
