@@ -3,13 +3,14 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { exampleURL, layout, loadExamples, renderExample, renderHome } from './site/pages.mjs';
+import { exampleURL, layout, loadExamples, loadTypes, renderExample, renderHome } from './site/pages.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pub = path.join(root, 'public');
 
 export function generate() {
   const examples = loadExamples(path.join(root, 'content', 'examples'));
+  const types = loadTypes(path.join(root, 'content', 'types'));
   const write = (rel, html) => {
     const file = path.join(pub, rel);
     mkdirSync(path.dirname(file), { recursive: true });
@@ -23,7 +24,7 @@ export function generate() {
   }));
   write('examples/index.html', layout({ title: '예제 · IOSignal 실습실', active: 'examples',
     body: '<main class="doc"><p><a href="/">예제 목록으로 이동합니다.</a></p></main><script>location.replace("/")</script>' }));
-  for (const ex of examples) write(path.join(exampleURL(ex), 'index.html'), renderExample(ex));
+  for (const ex of examples) write(path.join(exampleURL(ex), 'index.html'), renderExample(ex, types));
   return examples.length;
 }
 

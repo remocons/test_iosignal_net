@@ -1,0 +1,24 @@
+{
+	"schema": 1,
+	"type": "switch2.1",
+	"rev": 1,
+	"title": "2구 스위치",
+	"icon": "toggle_on",
+	"traits": [],
+	"controls": [
+		{
+			"widget": "switch",
+			"label": "1번",
+			"key": "s1",
+			"cmdOn": "s1=1",
+			"cmdOff": "s1=0"
+		},
+		{
+			"widget": "switch",
+			"label": "2번",
+			"key": "s2",
+			"cmdOn": "s2=1",
+			"cmdOff": "s2=0"
+		}
+	]
+}

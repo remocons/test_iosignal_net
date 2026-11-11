@@ -1,0 +1,30 @@
+{
+	"schema": 1,
+	"type": "iris.2",
+	"rev": 3,
+	"title": "iris 조명",
+	"icon": "palette",
+	"traits": ["onoff"],
+	"controls": [
+		{ "widget": "slider", "label": "전체 색상", "key": "h", "min": 0, "max": 359, "step": 1, "unit": "°", "track": "hue", "cmd": "h={v}" },
+		{ "widget": "slider", "label": "전체 밝기", "key": "b", "min": 0, "max": 100, "step": 5, "unit": "%", "cmd": "b={v}" },
+		{ "widget": "section", "label": "LED별 설정", "collapsed": true, "children": [
+			{ "widget": "section", "label": "LED 1", "children": [
+				{ "widget": "slider", "label": "색상", "key": "h1", "min": 0, "max": 359, "step": 1, "unit": "°", "track": "hue", "cmd": "h1={v}" },
+				{ "widget": "slider", "label": "밝기", "key": "b1", "min": 0, "max": 100, "step": 5, "unit": "%", "cmd": "b1={v}" }
+			] },
+			{ "widget": "section", "label": "LED 2", "children": [
+				{ "widget": "slider", "label": "색상", "key": "h2", "min": 0, "max": 359, "step": 1, "unit": "°", "track": "hue", "cmd": "h2={v}" },
+				{ "widget": "slider", "label": "밝기", "key": "b2", "min": 0, "max": 100, "step": 5, "unit": "%", "cmd": "b2={v}" }
+			] },
+			{ "widget": "section", "label": "LED 3", "children": [
+				{ "widget": "slider", "label": "색상", "key": "h3", "min": 0, "max": 359, "step": 1, "unit": "°", "track": "hue", "cmd": "h3={v}" },
+				{ "widget": "slider", "label": "밝기", "key": "b3", "min": 0, "max": 100, "step": 5, "unit": "%", "cmd": "b3={v}" }
+			] },
+			{ "widget": "section", "label": "LED 4", "children": [
+				{ "widget": "slider", "label": "색상", "key": "h4", "min": 0, "max": 359, "step": 1, "unit": "°", "track": "hue", "cmd": "h4={v}" },
+				{ "widget": "slider", "label": "밝기", "key": "b4", "min": 0, "max": 100, "step": 5, "unit": "%", "cmd": "b4={v}" }
+			] }
+		] }
+	]
+}

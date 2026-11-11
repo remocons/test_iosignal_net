@@ -1,0 +1,12 @@
+{
+	"schema": 1,
+	"type": "light.1",
+	"rev": 1,
+	"title": "전등",
+	"icon": "lightbulb",
+	"traits": ["onoff"],
+	"controls": [
+		{ "widget": "switch", "label": "전원", "key": "on", "cmdOn": "on", "cmdOff": "off" },
+		{ "widget": "button", "label": "토글", "cmd": "toggle" }
+	]
+}

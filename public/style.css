@@ -71,6 +71,41 @@ code{font-family:ui-monospace,monospace;font-size:.9em;background:#f1f4ee;paddin
 .gallery figcaption{padding:10px 12px;font-size:13px;color:#4d5d57;line-height:1.6}
 .gallery figcaption b{color:#367361;margin-right:6px}
 .docs{margin:14px 0 0;padding-left:20px;line-height:1.9}
+/* Example panel ("직접 해 보기") */
+#try .status{margin:4px 0 8px}
+.panel-connect{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.panel-connect label,.panel-connect .actions{margin:0}
+#panelNotice{color:#a53c25;font-size:14px;margin:0 0 8px;overflow-wrap:anywhere}
+.device-pick,.channel-send{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.device-pick select{width:auto;margin:0}
+label.inline{max-width:360px}
+.panel-screen{margin-top:12px;padding:16px;border:1px solid #dbe3d8;border-radius:12px;background:#fafcf8}
+.panel-screen>.hint{margin:0 0 10px}
+.w-screen{display:grid;gap:12px}
+.w-title{margin:0;font-size:15px}
+.w-row,.w-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.w-section{border:1px solid #dbe3d8;border-radius:10px;padding:10px 14px;display:grid;gap:10px;margin:0}
+.w-section legend,.w-section summary{font-size:13px;font-weight:700;color:#367361}
+.w-field{display:grid;gap:6px}
+.w-label{font-size:13px;font-weight:650}
+.w-switch{display:flex;align-items:center;gap:10px;margin:0;font-size:14px;cursor:pointer}
+.w-switch input{appearance:none;width:44px;height:24px;margin:0;padding:0;border-radius:999px;background:#c9d5cc;position:relative;cursor:pointer;flex:none;border:0;transition:background .15s}
+.w-switch input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.w-switch input:checked{background:#176b52}.w-switch input:checked::after{left:23px}
+.w-switch input:disabled{opacity:.45;cursor:not-allowed}
+.w-slider{display:flex;align-items:center;gap:10px}
+.w-slider output{min-width:56px;font:13px ui-monospace,monospace;text-align:right}
+input.w-hue{-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,red,#ff0,lime,cyan,blue,#f0f,red);height:10px;border-radius:999px;border:0}
+input.w-hue::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid #444;cursor:pointer}
+input.w-hue::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #444;cursor:pointer}
+.w-value{font:14px ui-monospace,monospace;overflow-wrap:anywhere}
+.w-text{display:flex;gap:8px}.w-text input{margin:0}.w-text button,.channel-send button,.device-pick button{white-space:nowrap;flex:none}
+.w-pad{display:grid;grid-template-columns:repeat(3,52px);gap:6px}
+.w-pad .pad-up{grid-column:2}.w-pad .pad-left{grid-column:1}.w-pad .pad-down{grid-column:2}
+button[aria-pressed=true]{background:#176b52;color:#fff}
+.panel-log{margin:12px 0 0}
+#panelLog{list-style:none;margin:0;padding:0;font:12px/1.7 ui-monospace,monospace;overflow-wrap:anywhere}
+#panelLog .rx{color:#147556}#panelLog .tx{color:#9b651d}
 #notes ul{margin:0;padding-left:20px;line-height:1.8}
 #flow td:nth-child(3) code,#wiring td:first-child code{white-space:nowrap;overflow-wrap:normal}
 #flow table{min-width:640px}
@@ -79,5 +114,6 @@ code{font-family:ui-monospace,monospace;font-size:.9em;background:#f1f4ee;paddin
   main{padding:0 14px 18px}main.lab{grid-template-columns:1fr}
   .page-head,.intro,.doc-head{padding:28px 14px 18px}main.home .intro{padding:28px 0 18px}
   section{padding:18px}
+  .panel-connect{grid-template-columns:1fr}
   .log-row{grid-template-columns:85px 40px 1fr}.log-row span:last-child{grid-column:1/-1}
 }

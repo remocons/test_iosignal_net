@@ -1,0 +1,38 @@
+{
+	"schema": 1,
+	"type": "switch4.1",
+	"rev": 1,
+	"title": "4구 스위치",
+	"icon": "toggle_on",
+	"traits": [],
+	"controls": [
+		{
+			"widget": "switch",
+			"label": "1번",
+			"key": "s1",
+			"cmdOn": "s1=1",
+			"cmdOff": "s1=0"
+		},
+		{
+			"widget": "switch",
+			"label": "2번",
+			"key": "s2",
+			"cmdOn": "s2=1",
+			"cmdOff": "s2=0"
+		},
+		{
+			"widget": "switch",
+			"label": "3번",
+			"key": "s3",
+			"cmdOn": "s3=1",
+			"cmdOff": "s3=0"
+		},
+		{
+			"widget": "switch",
+			"label": "4번",
+			"key": "s4",
+			"cmdOn": "s4=1",
+			"cmdOff": "s4=0"
+		}
+	]
+}

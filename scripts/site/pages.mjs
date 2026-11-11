@@ -2,6 +2,7 @@
 // The JSON comes from the Arduino repository (npm run site:export there).
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { normalizeScreen, parseInfo, screenFromUi } from '../../public/lib/control.js';
 
 export const LIBRARIES = {
   iosignal: { label: 'IOSignal', about: '채널 신호를 주고받는 기본 통신 예제입니다.' },
@@ -37,6 +38,64 @@ export function loadExamples(dir) {
 }
 
 export const exampleURL = (ex) => `/examples/${ex.library}/${ex.name}/`;
+
+// Official type files (content/types/<name>.<major>.json), exported with the examples.
+export function loadTypes(dir) {
+  if (!existsSync(dir)) return {};
+  return Object.fromEntries(readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => [f.slice(0, -5), JSON.parse(readFileSync(path.join(dir, f), 'utf8'))]));
+}
+
+export const SERVERS = { remocon: 'wss://io.remocon.kr/ws', iosignal: 'wss://io.iosignal.net/ws' };
+
+// What the "직접 해 보기" panel of an example does, or null when it has none:
+//   device  find the board by its type (or name) and draw that type's screen; a $panel from the board replaces it
+//   group   draw the group's type over the shared #ch$state
+//   channel send to and receive from the channel the board uses
+export function panelConfig(ex, types = {}) {
+  const flow = ex.flow ?? [];
+  const base = { server: SERVERS[ex.library], localServer: 'ws://localhost:7777' };
+  const infoStep = flow.find((f) => /\$info$/.test(f.tag ?? '') && /=/.test(f.value ?? ''));
+  const info = infoStep ? parseInfo(infoStep.value.replace(/<[^>]*>/g, '0')) : null;
+  const typeScreen = info?.type && types[info.type] ? normalizeScreen(types[info.type]) : null;
+  if (ex.kind === 'device' && infoStep?.tag === '@$info' && info?.name) {
+    const screen = typeScreen ?? screenFromUi(info.ui);
+    return { ...base, mode: 'device', target: info.type ? { type: info.type } : { name: info.name },
+      screen, screenSource: typeScreen ? `공식 타입 ${info.type}` : `ui 버튼 (${info.ui ?? '없음'})`, hasPanel: info.hasPanel };
+  }
+  if (ex.kind === 'group' && infoStep?.tag.startsWith('#') && typeScreen) {
+    return { ...base, mode: 'group', channel: infoStep.tag.slice(0, -'$info'.length), screen: typeScreen, screenSource: `공식 타입 ${info.type}` };
+  }
+  if (ex.kind === 'channel') {
+    const tag = flow.find((f) => f.value === '구독' && /^#\w+$/.test(f.tag ?? ''))?.tag;
+    if (tag) return { ...base, mode: 'channel', channel: { tag } };
+  }
+  return null;
+}
+
+// JSON inside <script type="application/json">: '<' is escaped so the data cannot end the element.
+const scriptJSON = (value) => JSON.stringify(value).replace(/</g, '\\u003c');
+
+function renderPanel(ex, config) {
+  if (!config) return '';
+  const server = `<form id="panelConnect" class="panel-connect"><label>서버<input id="panelServer" type="url" value="${esc(config.server)}" required></label><div class="actions"><button>연결</button><button type="button" id="panelClose" class="secondary">연결 종료</button></div></form>
+<p class="status"><strong id="panelConnection" role="status">미연결</strong> · 내 CID <code id="panelCID">—</code> <span id="panelState" class="hint"></span></p><p id="panelNotice" role="alert"></p>`;
+  let body = '';
+  let intro = '';
+  if (config.mode === 'device') {
+    intro = `보드를 켜고 연결하면 <code>#search</code>로 이 예제의 보드(${config.target.type ? `타입 <code>${esc(config.target.type)}</code>` : `이름 <code>${esc(config.target.name)}</code>`})를 찾아 remocon.kr과 같은 화면으로 제어합니다.${config.hasPanel ? ' 보드가 보낸 화면(<code>$panel</code>)이 오면 그 화면으로 바뀝니다.' : ''}`;
+    body = `<div class="device-pick"><span id="deviceFound" class="hint">연결하면 이 예제의 보드를 찾습니다.</span><select id="deviceSelect" aria-label="제어할 보드" hidden></select><button type="button" id="searchButton" class="secondary">다시 찾기</button></div>`;
+  } else if (config.mode === 'group') {
+    intro = `그룹 채널의 공유 상태(<code>${esc(config.channel)}$state</code>)를 remocon.kr과 같은 화면으로 바꿉니다. 그룹의 보드들이 각자 자기 키를 적용합니다.`;
+    body = `<label class="inline">그룹 채널<input id="groupChannel" value="${esc(config.channel)}" spellcheck="false"></label>`;
+  } else {
+    intro = `<code>${esc(config.channel.tag)}</code> 채널로 신호를 보내고, 보드가 보낸 신호를 받습니다.`;
+    body = `<div class="channel-send"><label class="inline">보낼 값<input id="channelValue" value="browser"></label><button type="button" id="channelSend" disabled>신호 보내기</button></div><p id="channelReceived" class="hint">아직 받은 신호가 없습니다.</p>`;
+  }
+  const screen = config.mode === 'channel' ? '' : `<div class="panel-screen"><p class="hint">화면: <span id="screenSource"></span></p><div id="panelArea" class="w-screen"></div></div>`;
+  return `<section id="try"><h2>직접 해 보기</h2><p class="hint">${intro}</p>${server}${body}${screen}
+<details class="panel-log"><summary>주고받은 신호</summary><ul id="panelLog"></ul></details>
+<script type="application/json" id="panel-config">${scriptJSON({ ...config, library: ex.library, name: ex.name })}</script></section>`;
+}
 
 // A /lab/ link that fills the tags this example uses, or '' when the lab has no matching template.
 export function labLink(ex) {
@@ -115,7 +174,8 @@ export function renderMedia(media) {
   return `${figures ? `<div class="gallery">${figures}</div>` : '<p class="placeholder">아직 등록된 사진이 없습니다.</p>'}${links ? `<ul class="docs">${links}</ul>` : ''}`;
 }
 
-export function renderExample(ex) {
+export function renderExample(ex, types = {}) {
+  const panel = panelConfig(ex, types);
   const lib = LIBRARIES[ex.library];
   const lab = labLink(ex);
   const sections = [];
@@ -131,6 +191,7 @@ export function renderExample(ex) {
     ? table(['보드 핀', '연결', '비고'], ex.wiring.map((w) => [`<code>${esc(w.pin)}</code>`, esc(w.part), esc(w.note)]))
     : '<p>따로 배선할 부품이 없습니다.</p>'}</section>`);
   if (ex.setup?.length) sections.push(`<section id="steps"><h2>사용 순서</h2><ol class="steps">${ex.setup.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></section>`);
+  sections.push(renderPanel(ex, panel));
   if (ex.flow?.length) sections.push(`<section id="flow"><h2>시그널 흐름</h2>${table(['보내는 쪽', '받는 쪽', '태그', '값', '설명'],
     ex.flow.map((f) => [esc(f.from), esc(f.to), `<code>${esc(f.tag)}</code>`, f.value ? `<code>${esc(f.value)}</code>` : '', esc(f.note)]))}</section>`);
   if (ex.notes?.length) sections.push(`<section id="notes"><h2>참고</h2><ul>${ex.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul></section>`);
@@ -142,5 +203,5 @@ export function renderExample(ex) {
 <p class="badges"><span class="badge">${esc(KINDS[ex.kind] ?? ex.kind)}</span>${ex.boards.map((b) => `<span class="badge">${esc(b.name)}</span>`).join('')}${statusBadge(ex)}</p></header>
 ${sections.join('\n')}
 </main>`;
-  return layout({ title: `${ex.title} · IOSignal 실습실`, description: ex.summary, active: 'examples', body });
+  return layout({ title: `${ex.title} · IOSignal 실습실`, description: ex.summary, active: 'examples', body, scripts: panel ? ['/example/panel.js'] : [] });
 }

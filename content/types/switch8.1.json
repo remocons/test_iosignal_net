@@ -1,0 +1,66 @@
+{
+	"schema": 1,
+	"type": "switch8.1",
+	"rev": 1,
+	"title": "8구 스위치",
+	"icon": "toggle_on",
+	"traits": [],
+	"controls": [
+		{
+			"widget": "switch",
+			"label": "1번",
+			"key": "s1",
+			"cmdOn": "s1=1",
+			"cmdOff": "s1=0"
+		},
+		{
+			"widget": "switch",
+			"label": "2번",
+			"key": "s2",
+			"cmdOn": "s2=1",
+			"cmdOff": "s2=0"
+		},
+		{
+			"widget": "switch",
+			"label": "3번",
+			"key": "s3",
+			"cmdOn": "s3=1",
+			"cmdOff": "s3=0"
+		},
+		{
+			"widget": "switch",
+			"label": "4번",
+			"key": "s4",
+			"cmdOn": "s4=1",
+			"cmdOff": "s4=0"
+		},
+		{
+			"widget": "switch",
+			"label": "5번",
+			"key": "s5",
+			"cmdOn": "s5=1",
+			"cmdOff": "s5=0"
+		},
+		{
+			"widget": "switch",
+			"label": "6번",
+			"key": "s6",
+			"cmdOn": "s6=1",
+			"cmdOff": "s6=0"
+		},
+		{
+			"widget": "switch",
+			"label": "7번",
+			"key": "s7",
+			"cmdOn": "s7=1",
+			"cmdOff": "s7=0"
+		},
+		{
+			"widget": "switch",
+			"label": "8번",
+			"key": "s8",
+			"cmdOn": "s8=1",
+			"cmdOff": "s8=0"
+		}
+	]
+}

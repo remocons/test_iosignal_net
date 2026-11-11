@@ -1,0 +1,20 @@
+{
+	"schema": 1,
+	"type": "relay4.1",
+	"rev": 1,
+	"title": "4채널 릴레이",
+	"icon": "electrical_services",
+	"traits": [],
+	"controls": [
+		{ "widget": "section", "label": "릴레이", "children": [
+			{ "widget": "switch", "label": "1번", "key": "r1", "cmdOn": "r1=1", "cmdOff": "r1=0" },
+			{ "widget": "switch", "label": "2번", "key": "r2", "cmdOn": "r2=1", "cmdOff": "r2=0" },
+			{ "widget": "switch", "label": "3번", "key": "r3", "cmdOn": "r3=1", "cmdOff": "r3=0" },
+			{ "widget": "switch", "label": "4번", "key": "r4", "cmdOn": "r4=1", "cmdOff": "r4=0" }
+		] },
+		{ "widget": "row", "children": [
+			{ "widget": "button", "label": "모두 켜기", "cmd": "all=1" },
+			{ "widget": "button", "label": "모두 끄기", "cmd": "all=0" }
+		] }
+	]
+}
