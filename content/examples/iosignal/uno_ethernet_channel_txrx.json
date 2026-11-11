@@ -1,0 +1,60 @@
+{
+  "title": "Uno 이더넷 채널 송수신",
+  "kind": "channel",
+  "summary": "버튼을 누르면 #homeButton 채널로 신호를 보내고, 같은 채널의 신호를 받으면 LED를 바꿉니다.",
+  "boards": [
+    {
+      "name": "Arduino Uno R3 + Ethernet Shield",
+      "fqbn": "arduino:avr:uno"
+    }
+  ],
+  "network": "유선 이더넷",
+  "app": "http://test.iosignal.net",
+  "partners": [],
+  "wiring": [
+    {
+      "pin": "3",
+      "part": "LED",
+      "note": "수신하면 켜짐과 꺼짐이 바뀝니다."
+    },
+    {
+      "pin": "2",
+      "part": "버튼",
+      "note": "누르면 GND로 연결됩니다. 내부 풀업을 씁니다."
+    }
+  ],
+  "setup": [
+    "보드에 맞게 핀 번호를 확인합니다.",
+    "여러 보드를 함께 쓰면 MAC 주소를 서로 다르게 바꿉니다.",
+    "컴파일하고 업로드합니다.",
+    "브라우저로 http://test.iosignal.net 에 접속해 확인합니다."
+  ],
+  "flow": [
+    {
+      "from": "보드",
+      "to": "서버",
+      "tag": "#homeButton",
+      "value": "구독",
+      "note": "접속이 끝나면 채널을 구독합니다."
+    },
+    {
+      "from": "보드",
+      "to": "서버",
+      "tag": "#homeButton",
+      "value": "uno3-eth",
+      "note": "버튼을 누르면 보냅니다."
+    },
+    {
+      "from": "서버",
+      "to": "보드",
+      "tag": "#homeButton",
+      "note": "LED 상태를 바꿉니다."
+    }
+  ],
+  "library": "iosignal",
+  "name": "uno_ethernet_channel_txrx",
+  "draft": true,
+  "approved": true,
+  "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/uno_ethernet_channel_txrx",
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/uno_ethernet_channel_txrx/uno_ethernet_channel_txrx.ino"
+}

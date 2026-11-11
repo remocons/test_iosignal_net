@@ -1,6 +1,6 @@
 import IO from 'iosignal/io';
-import { presets, boards, parseArgs, describeArgs, cidTags } from './lib/protocol.js';
-import { connectionAdvice } from './lib/connection.js';
+import { presets, parseArgs, describeArgs, cidTags, linkOptions } from '../lib/protocol.js';
+import { connectionAdvice } from '../lib/connection.js';
 const $ = id => document.getElementById(id);
 $('ioVersion').textContent = `v${IO.version}`;
 let io, ready = false, paused = false, logs = [], activeTags = new Set(), currentPreset = "", resetControls = () => {};
@@ -41,31 +41,23 @@ function send(tag, args) {
 }
 function sendValue(value, type = 'text') { $('payloadType').value = type; $('payload').value = value; send($('sendTag').value, parseArgs(type, value)); }
 function action(label, fn) { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.disabled = !ready; b.onclick = () => attempt(fn); $('presetControls').append(b); }
-function usePreset() {
+function usePreset(link = {}) {
   const key = $('preset').value, p = presets[key];
   resetControls = () => {};
   $('sendTag').value = p.tag; $('payloadType').value = p.type; $('payload').value = p.value;
   $('subscriptions').value = p.subscriptions.join('\n'); $('presetHelp').textContent = p.help;
   $('cidControls').hidden = key !== 'cid'; $('presetControls').replaceChildren(); $('sliders').replaceChildren(); $('sliders').hidden = true;
-  if (key === 'cid' && $('board').value === 'esp01') {
-    $('payload').value = 'Relay';
-    $('presetHelp').textContent = 'CID 적용 후 Relay 또는 LED로 해당 출력을 토글합니다. 상태 두 자리는 GPIO 출력값입니다.';
-  }
   if (key === 'basic') action('버튼 이벤트', () => sendValue('browser'));
-  $('irisControls').hidden = key !== 'iris';
-  if (key === 'iris') {
-    const tag = `#Iris-g${$('irisGroup').value}$states`;
-    $('sendTag').value = tag; $('subscriptions').value = tag;
-    action('모두 켜기', () => sendValue('11111111'));
-    action('모두 끄기', () => sendValue('00000000'));
-    for (let i = 0; i < 8; i++) action(`장치 ${i}만 켜기`, () => sendValue('0'.repeat(i) + '1' + '0'.repeat(7-i)));
-  }
-  if (key === 'cid') for (const cmd of ($('board').value === 'esp01' ? ['Relay', 'LED'] : ['on', 'off', 'toggle'])) action(cmd, () => sendValue(cmd));
-  if (key === 'group') for (const [label, value] of [['모두 켜기', '11'], ['모두 끄기', '00'], ['장치 1', '10'], ['장치 2', '01']]) action(label, () => sendValue(value));
+  if (link.tag !== undefined) $('sendTag').value = link.tag;
+  if (link.type !== undefined) $('payloadType').value = link.type;
+  if (link.value !== undefined) $('payload').value = link.value;
+  if (link.subscriptions !== undefined) $('subscriptions').value = link.subscriptions.join('\n');
+  if (key === 'cid') for (const cmd of ['on', 'off', 'toggle']) action(cmd, () => sendValue(cmd));
+  if (key === 'group') for (const [label, value] of [['모두 켜기', 's1=1;s2=1;s3=1'], ['모두 끄기', 's1=0;s2=0;s3=0'], ['1번만', 's1=1;s2=0;s3=0'], ['2번만', 's1=0;s2=1;s3=0']]) action(label, () => sendValue(value));
   if (key === 'direction') for (const [label, value] of [['↑', 'u'], ['←', 'l'], ['정지', 's'], ['→', 'r'], ['↓', 'd']]) action(label, () => sendValue(value));
-  if (key === 'rgb' || key === 'motor') {
+  if (key === 'motor') {
     let values = Array.from(parseArgs('hex', p.value)[0]); $('sliders').hidden = false;
-    const labels = key === 'rgb' ? ['R', 'G', 'B'] : ['M1A', 'M1B', 'M2A', 'M2B'];
+    const labels = ['M1A', 'M1B', 'M2A', 'M2B'];
     const emit = () => sendValue(values.map(v => v.toString(16).padStart(2, '0')).join(' '), 'hex');
     labels.forEach((name, i) => {
       const label = document.createElement('label'); label.textContent = name;
@@ -74,8 +66,7 @@ function usePreset() {
       slider.addEventListener('change', () => attempt(emit)); label.append(slider); $('sliders').append(label);
     });
     resetControls = () => { values.fill(0); for (const el of $('sliders').querySelectorAll('input')) el.value = 0; };
-    action(key === 'rgb' ? 'LED 끄기' : '정지 (00 00 00 00)', () => { resetControls(); emit(); });
-    if (key === 'rgb') action('빨강', () => { values = [255, 0, 0, 0]; $('sliders').querySelectorAll('input').forEach((el, i) => { el.value = values[i]; }); emit(); });
+    action('정지 (00 00 00 00)', () => { resetControls(); emit(); });
   }
   currentPreset = key;
   applySubscriptions();
@@ -114,22 +105,11 @@ $('clearLog').onclick = () => { logs = []; renderLog(); };
 $('logFilter').oninput = renderLog;
 $('copyLog').onclick = async () => { try { await navigator.clipboard.writeText(logs.map(r => `${r.time} ${r.direction} ${r.tag} ${r.value}`).join('\n')); notice('로그를 복사했습니다.'); } catch { notice('클립보드를 사용할 수 없습니다. 로그의 텍스트를 선택해 복사하세요.'); } };
 for (const [key, p] of Object.entries(presets)) { const opt = document.createElement('option'); opt.value = key; opt.textContent = p.name; $('preset').append(opt); }
-for (const [key, b] of Object.entries(boards)) { const opt = document.createElement('option'); opt.value = key; opt.textContent = b.name; $('board').append(opt); }
-function useBoard() {
-  stopMotor();
-  const b = boards[$('board').value];
-  $('preset').value = b.preset;
-  $('boardTutorial').href = `https://iosignal.net/docs/examples/workbench/${b.page}`;
-  usePreset();
-}
-$('board').onchange = () => attempt(useBoard);
-$('irisGroup').onchange = () => attempt(usePreset);
-const params = new URLSearchParams(location.search);
-if (boards[params.get('board')]) $('board').value = params.get('board');
-useBoard();
-if (presets[params.get('preset')]) $('preset').value = params.get('preset');
+// Example pages link here with the tags they use (?preset=…&tag=…&sub=…).
+const link = linkOptions(location.search);
+$('preset').value = link.preset;
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') $('serverURL').value = 'ws://localhost:7777';
-usePreset(); updateReady(false);
+usePreset(link); updateReady(false);
 
 function updateConnectionAdvice() {
   const advice = connectionAdvice(location.protocol, $('serverURL').value);

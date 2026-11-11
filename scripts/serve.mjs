@@ -1,4 +1,7 @@
 import { createServer } from 'vite';
+import { generate } from './generate.mjs';
+
+console.log(`Generated ${generate()} example pages.`);
 const server = await createServer();
 await server.listen();
 server.printUrls();

@@ -1,11 +1,11 @@
+// Signal templates for the web lab. They follow the device rules: key=value $info and $state,
+// #search / #notify discovery, <cid>@ commands, and group channels that share #ch$state.
 export const presets = {
-  iris: { name: 'iris · 8개 그룹 상태', tag: '#Iris-g0$states', type: 'text', value: '00000000', subscriptions: ['#Iris-g0$states'], help: 'DIP의 그룹 번호와 맞추세요. 8자리 0/1 문자열에서 장치 번호에 해당하는 자리가 그 보드의 WS2812 4개를 제어합니다.' },
-  basic: { name: '기본 송수신', tag: '#homeButton', type: 'text', value: 'browser', subscriptions: ['#homeButton'], help: 'C3 버튼/LED 및 ESP32 channel_txrx 예제. 받은 이벤트마다 LED를 토글합니다.' },
-  cid: { name: '장치 개별 제어 (CID)', tag: '', type: 'text', value: 'on', subscriptions: ['#notify'], help: '장치 찾기로 CID를 확인한 뒤 입력하세요. on/off/toggle 명령과 실제 상태를 확인합니다.' },
-  group: { name: '그룹 LED', tag: '#lab$states', type: 'text', value: '10', subscriptions: ['#detect/ch', '#lab$name', '#lab$ui', '#lab$states'], help: 'ESP32 그룹 예제 2대에서 OUTPUT_INDEX를 0과 1로 설정합니다. 10 = 첫 장치 ON, 둘째 OFF. 공유값은 적용 요청이며 개별 장치의 완료 확인은 아닙니다.' },
-  rgb: { name: 'ESP32-S3 RGB', tag: '#robot', type: 'hex', value: 'ff 00 00 00', subscriptions: ['#robot'], help: 'remocon-arduino esp32s3-ws2812 전용: R G B 예약 바이트. 이 프리셋을 모터 장치에 사용하지 마세요.' },
+  basic: { name: '채널 송수신', tag: '#homeButton', type: 'text', value: 'browser', subscriptions: ['#homeButton'], help: 'IOSignal 채널 예제(esp8266_channel_txrx 등)와 같은 채널입니다. 받은 신호마다 보드의 LED가 바뀝니다.' },
+  cid: { name: '장치 제어 (CID)', tag: '', type: 'text', value: 'on', subscriptions: ['#notify'], help: '장치 찾기로 #search를 보내고 #notify로 답한 CID를 입력하세요. CID 적용 후 명령을 보내고 <cid>@$state로 돌아온 상태를 확인합니다.' },
+  group: { name: '그룹 공유 상태', tag: '#switch$state', type: 'text', value: 's1=1;s2=0;s3=0', subscriptions: ['#switch$state'], help: '그룹 채널의 상태를 key=value로 다시 씁니다. 각 보드는 자기 키(s1, s2 …)만 적용합니다. 보관된 값이 있으면 구독하자마자 받습니다.' },
   motor: { name: '모터 PWM 4바이트', tag: '#robot', type: 'hex', value: '00 00 00 00', subscriptions: ['#robot'], help: 'M1A M1B M2A M2B 규약의 장치용입니다. 장치 측 통신 타임아웃 정지가 필요합니다.' },
-  direction: { name: '방향 문자열', tag: '#robot', type: 'text', value: 's', subscriptions: ['#robot'], help: 'u/l/s/r/d 문자열을 처리하는 장치용. PWM 및 RGB 프리셋과 별개의 payload 규약입니다.' }
+  direction: { name: '방향 문자열', tag: '#robot', type: 'text', value: 's', subscriptions: ['#robot'], help: 'u/l/s/r/d 문자열을 처리하는 장치용입니다. 모터 PWM 템플릿과 별개의 규약입니다.' }
 };
 
 export function parseArgs(type, value) {
@@ -33,15 +33,19 @@ export function describeArgs(args) { return args.length ? args.map(displayArg).j
 export function cidTags(cid) {
   const value = cid.trim();
   if (!value || /[@#,\s]/.test(value)) throw Error('태그가 아닌 장치 CID 하나를 입력하세요.');
-  return { command: `${value}@`, subscriptions: ['name', 'ui', 'state'].map(t => `${value}@$${t}`) };
+  return { command: `${value}@`, subscriptions: ['info', 'state'].map(t => `${value}@$${t}`) };
 }
 
-export const boards = {
-  c3: { name: 'ESP32-C3 Super Mini · 버튼/LED', preset: 'basic', page: 'c3' },
-  d1: { name: 'ESP8266 D1 mini · CID LED', preset: 'cid', page: 'd1' },
-  esp01: { name: 'ESP-01 · 릴레이/LED', preset: 'cid', page: 'esp01' },
-  iris: { name: 'iris · DIP 그룹/WS2812', preset: 'iris', page: 'iris' },
-  esp32: { name: 'ESP32 · 기본 송수신', preset: 'basic', page: 'basic' },
-  s3: { name: 'ESP32-S3 · RGB', preset: 'rgb', page: 'rgb' },
-  generic: { name: '범용 · 직접 설정', preset: 'basic', page: 'start' }
-};
+// Values a page can pass in the URL: ?preset=group&tag=%23lab%24state&value=...&type=text&sub=a,b
+export function linkOptions(search) {
+  const params = new URLSearchParams(search);
+  const preset = presets[params.get('preset')] ? params.get('preset') : 'basic';
+  const sub = params.get('sub');
+  return {
+    preset,
+    tag: params.get('tag') ?? undefined,
+    value: params.get('value') ?? undefined,
+    type: ['text', 'empty', 'hex', 'json', 'args'].includes(params.get('type')) ? params.get('type') : undefined,
+    subscriptions: sub === null ? undefined : sub.split(',').map(t => t.trim()).filter(Boolean),
+  };
+}

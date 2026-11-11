@@ -1,0 +1,67 @@
+{
+  "title": "ESP8266·ESP32 채널 송수신",
+  "kind": "channel",
+  "summary": "버튼을 누르면 #homeButton 채널로 신호를 보내고, 같은 채널의 신호를 받으면 LED를 바꿉니다.",
+  "boards": [
+    {
+      "name": "ESP8266 D1 mini",
+      "fqbn": "esp8266:esp8266:d1_mini"
+    },
+    {
+      "name": "ESP32 개발 보드",
+      "fqbn": "esp32:esp32:esp32"
+    }
+  ],
+  "network": "Wi-Fi 2.4GHz 공유기",
+  "app": "http://test.iosignal.net",
+  "partners": [],
+  "wiring": [
+    {
+      "pin": "2",
+      "part": "LED",
+      "note": "수신하면 켜짐과 꺼짐이 바뀝니다."
+    },
+    {
+      "pin": "14 (ESP8266) / 12 (ESP32)",
+      "part": "버튼",
+      "note": "누르면 GND로 연결됩니다. 내부 풀업을 씁니다."
+    }
+  ],
+  "setup": [
+    "스케치의 WIFI_SSID와 비밀번호를 실제 값으로 바꿉니다.",
+    "보드에 맞게 핀 번호를 확인합니다.",
+    "컴파일하고 업로드합니다.",
+    "브라우저로 http://test.iosignal.net 에 접속해 확인합니다."
+  ],
+  "flow": [
+    {
+      "from": "보드",
+      "to": "서버",
+      "tag": "#homeButton",
+      "value": "구독",
+      "note": "접속이 끝나면 채널을 구독합니다."
+    },
+    {
+      "from": "보드",
+      "to": "서버",
+      "tag": "#homeButton",
+      "value": "esp8266 또는 esp32",
+      "note": "버튼을 누르면 보냅니다."
+    },
+    {
+      "from": "서버",
+      "to": "보드",
+      "tag": "#homeButton",
+      "note": "LED 상태를 바꿉니다."
+    }
+  ],
+  "notes": [
+    "esp32_channel_txrx를 합쳤습니다. 보드에 따라 버튼 핀과 보내는 값이 바뀝니다."
+  ],
+  "library": "iosignal",
+  "name": "esp8266_channel_txrx",
+  "draft": true,
+  "approved": true,
+  "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp8266_channel_txrx",
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp8266_channel_txrx/esp8266_channel_txrx.ino"
+}

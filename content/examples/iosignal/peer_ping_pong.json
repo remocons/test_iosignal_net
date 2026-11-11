@@ -1,0 +1,55 @@
+{
+  "title": "피어 핑 응답",
+  "kind": "other",
+  "summary": "같은 서버의 CLI가 보낸 핑을 받아 이 보드의 CID로 바로 답합니다.",
+  "boards": [
+    {
+      "name": "ESP32 개발 보드",
+      "fqbn": "esp32:esp32:esp32"
+    },
+    {
+      "name": "ESP32-C3 Super Mini",
+      "fqbn": "esp32:esp32:esp32c3"
+    },
+    {
+      "name": "ESP8266 D1 mini",
+      "fqbn": "esp8266:esp8266:d1_mini"
+    }
+  ],
+  "network": "Wi-Fi 2.4GHz 공유기",
+  "app": "없음",
+  "partners": [
+    {
+      "name": "iosignal-cli",
+      "role": "ping <cid> 명령을 보냅니다."
+    }
+  ],
+  "wiring": [],
+  "setup": [
+    "스케치의 WiFi 이름과 비밀번호를 바꿉니다.",
+    "업로드 후 시리얼에 출력된 CID를 확인합니다.",
+    "같은 서버에 접속한 CLI에서 ping <cid>를 실행합니다."
+  ],
+  "flow": [
+    {
+      "from": "CLI",
+      "to": "보드",
+      "tag": "@ping",
+      "value": "<보낸 쪽 CID>",
+      "note": "CLI가 이 보드의 CID로 보냅니다."
+    },
+    {
+      "from": "보드",
+      "to": "CLI",
+      "tag": "응답",
+      "value": "<보드 CID>",
+      "note": "받는 즉시 답합니다."
+    }
+  ],
+  "library": "iosignal",
+  "name": "peer_ping_pong",
+  "draft": true,
+  "approved": false,
+  "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/peer_ping_pong",
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/peer_ping_pong/peer_ping_pong.ino"
+}

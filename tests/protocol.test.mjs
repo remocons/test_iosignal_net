@@ -22,6 +22,7 @@ test('payload entry keeps EMPTY, empty text, null and binary distinct', () => {
   assert.match(describeArgs([]), /EMPTY/);
   assert.match(describeArgs([new Uint8Array([255])]), /BINARY 1 bytes: ff/);
   assert.equal(cidTags('board').command, 'board@');
+  assert.deepEqual(cidTags('board').subscriptions, ['board@$info', 'board@$state']);
 });
 test('public server routes discovery, CID commands and retained group state', { timeout: 15000 }, async t => {
   const http = createServer();
@@ -44,8 +45,8 @@ test('public server routes discovery, CID commands and retained group state', { 
   web.subscribe(`${device.cid}@$state`); await web.call('reply','echo','barrier');
   device.on('@',(tag,cmd)=>{ if(tag==='@') device.signal('@$state',cmd); });
   const state=event(web,`${device.cid}@$state`); web.signal(`${device.cid}@`,'on'); assert.deepEqual(await state,[`${device.cid}@$state`,'on']);
-  web.signal('#lab$states','10'); await web.call('reply','echo','barrier');
-  const second=await connect(); const restored=event(second,'#lab$states'); second.subscribe('#lab$states'); assert.deepEqual(await restored,['#lab$states','10']);
+  web.signal('#lab$state','s1=1;s2=0'); await web.call('reply','echo','barrier');
+  const second=await connect(); const restored=event(second,'#lab$state'); second.subscribe('#lab$state'); assert.deepEqual(await restored,['#lab$state','s1=1;s2=0']);
   web.subscribe('payload'); await web.call('reply','echo','barrier');
   for(const [type,value] of [['empty',''],['text',''],['json','null'],['hex','ff 00 7f']]) {
     const received=event(web,'payload'); web.signal('payload',...parseArgs(type,value));

@@ -1,0 +1,38 @@
+{
+  "title": "ESP32-CAM 사진 전송",
+  "kind": "camera",
+  "summary": "카메라로 찍은 사진을 E2E 암호화 시그널로 보내고, 같은 폴더의 index.html로 받아 봅니다.",
+  "boards": [
+    {
+      "name": "ESP32-CAM (AI Thinker)",
+      "fqbn": "esp32:esp32:esp32cam"
+    }
+  ],
+  "network": "Wi-Fi 2.4GHz 공유기",
+  "app": "같은 폴더의 index.html",
+  "partners": [],
+  "wiring": [],
+  "setup": [
+    "스케치의 WiFi 이름과 비밀번호를 바꿉니다.",
+    "인증값과 YOUR_E2E_KEY를 본인 값으로 바꿉니다. index.html에도 같은 키를 넣습니다.",
+    "업로드 후 index.html을 브라우저로 엽니다."
+  ],
+  "flow": [
+    {
+      "from": "보드",
+      "to": "브라우저",
+      "tag": "#e2e_cam",
+      "value": "JPEG (E2E 암호화)",
+      "note": "서버를 거쳐 전달합니다."
+    }
+  ],
+  "notes": [
+    "스케치에 자리표시자가 아닌 인증값이 있습니다. E2E 키는 YOUR_E2E_KEY로 바꿨으므로 스케치와 index.html에 같은 값을 넣어야 합니다."
+  ],
+  "library": "iosignal",
+  "name": "esp32cam",
+  "draft": true,
+  "approved": false,
+  "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp32cam",
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32cam/esp32cam.ino"
+}

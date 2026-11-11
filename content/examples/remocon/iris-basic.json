@@ -1,0 +1,107 @@
+{
+  "title": "iris 기본",
+  "kind": "device",
+  "summary": "iris 보드의 내장 RGB LED 4개를 4구 스위치로 켜고 끕니다. 웹앱에서 하나씩, 내장 버튼 2개로 전체 또는 차례로 제어합니다. DIP 스위치와 그룹은 쓰지 않습니다.",
+  "boards": [
+    {
+      "name": "iris 보드 (ESP32-C3)",
+      "fqbn": "esp32:esp32:esp32c3"
+    }
+  ],
+  "network": "Wi-Fi 2.4GHz 공유기",
+  "app": "https://remocon.kr 또는 IOSignal Desktop 장치 제어 화면",
+  "partners": [],
+  "wiring": [
+    {
+      "pin": "GPIO4",
+      "part": "WS2812 4개",
+      "note": "보드에 내장"
+    },
+    {
+      "pin": "GPIO1",
+      "part": "버튼 1: 전체 켜기/끄기",
+      "note": "내부 풀업"
+    },
+    {
+      "pin": "GPIO2",
+      "part": "버튼 2: 켜진 LED를 하나씩 늘림, 4개 다음은 모두 끔",
+      "note": "내부 풀업"
+    }
+  ],
+  "setup": [
+    "스케치의 WiFi 이름과 비밀번호를 실제 값으로 바꿉니다.",
+    "스케치를 업로드합니다.",
+    "같은 공유기에 연결한 브라우저로 https://remocon.kr 을 엽니다.",
+    "Iris Basic 카드의 스위치와 보드 버튼을 눌러 봅니다."
+  ],
+  "flow": [
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "#search",
+      "value": "구독",
+      "note": "앱의 검색 요청을 받도록 구독합니다."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$info",
+      "value": "n=Iris Basic;t=switch4.1",
+      "note": "이름과 공식 4구 스위치 타입입니다. 서버에 보관됩니다."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$state",
+      "value": "s1=0;s2=0;s3=0;s4=0",
+      "note": "현재 상태입니다. 서버에 보관됩니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "#notify",
+      "value": "<cid>",
+      "note": "접속했음을 알립니다."
+    },
+    {
+      "from": "앱",
+      "to": "장치",
+      "tag": "#search",
+      "note": "앱이 장치를 찾습니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "#notify",
+      "value": "<cid>",
+      "note": "검색에 자기 CID로 답합니다."
+    },
+    {
+      "from": "앱",
+      "to": "장치",
+      "tag": "<cid>@",
+      "value": "s2=1",
+      "note": "스위치 하나를 켜고 끕니다. 장치가 받는 태그는 @입니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "@$state",
+      "value": "s1=0;s2=1;s3=0;s4=0",
+      "note": "명령과 보드 버튼 뒤에 전체 상태를 보냅니다. 알 수 없는 명령에도 보냅니다."
+    }
+  ],
+  "notes": [
+    "iris-group에서 DIP 스위치, 그룹 채널, 상태 LED를 뺀 단독 장치판입니다.",
+    "재접속하면 보드에 남은 상태를 다시 보냅니다.",
+    "시리얼 로그는 115200입니다. 보드 USB로 보려면 USB CDC On Boot를 Enabled로 컴파일합니다(fqbn esp32:esp32:esp32c3:CDCOnBoot=cdc).",
+    "Wi-Fi 절전을 끄고(WiFi.setSleep(false)) TCP 지연 전송을 끕니다(setNoDelay). 절전이 켜져 있으면 받는 신호가 100~800ms 늦어집니다. 2026-11-09 측정: 명령에서 상태까지 213ms → 23ms.",
+    "Wi-Fi 송신 출력을 8.5dBm으로 낮춥니다. 한 iris 보드가 최대 출력에서 보내는 패킷을 잃어 TCP가 멈췄고(명령 60개 중 32개 응답), 낮추자 60개 모두 응답했습니다(2026-11-09)."
+  ],
+  "library": "remocon",
+  "name": "iris-basic",
+  "draft": false,
+  "approved": true,
+  "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-basic",
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-basic/iris-basic.ino"
+}

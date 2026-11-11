@@ -1,0 +1,148 @@
+{
+  "title": "UNO 이더넷 적외선 리모컨",
+  "kind": "device",
+  "summary": "NEC 리모컨 신호를 받아 bayo.tv 영상과 다른 장치를 제어합니다. 웹앱 카드로 LED와 릴레이도 켜고 끕니다.",
+  "boards": [
+    {
+      "name": "Arduino UNO R3",
+      "fqbn": "arduino:avr:uno",
+      "note": "W5100 Ethernet 실드"
+    }
+  ],
+  "network": "유선 Ethernet, DHCP",
+  "app": "https://remocon.kr 또는 IOSignal Desktop 장치 제어 화면, https://bayo.tv",
+  "partners": [
+    {
+      "name": "bayo.tv",
+      "role": "리모컨 버튼이 #screen 신호로 영상을 제어합니다"
+    },
+    {
+      "name": "다른 장치 2대",
+      "role": "cid1@, cid2@로 toggle을 보냅니다. 실제 CID로 바꿔야 합니다"
+    }
+  ],
+  "wiring": [
+    {
+      "pin": "D2",
+      "part": "NEC 적외선 수신 모듈 OUT",
+      "note": "VCC는 5V, GND는 GND"
+    },
+    {
+      "pin": "D5",
+      "part": "LED + 저항, 다른 쪽은 GND",
+      "note": "HIGH가 켜짐"
+    },
+    {
+      "pin": "D6",
+      "part": "릴레이 입력",
+      "note": "LED와 함께 동작"
+    },
+    {
+      "pin": "D10, D11-13",
+      "part": "Ethernet 실드 (SPI)",
+      "note": "실드를 끼우면 연결됩니다"
+    }
+  ],
+  "setup": [
+    "Ethernet 실드와 IR 수신 모듈을 연결합니다.",
+    "스케치의 cid1@, cid2@를 제어할 장치의 CID로 바꿉니다.",
+    "시리얼 모니터의 C= 값을 보고 리모컨 코드에 맞게 switch 값을 고칩니다.",
+    "업로드한 뒤 https://bayo.tv 를 같은 네트워크에서 엽니다.",
+    "리모컨 버튼을 눌러 영상과 장치가 움직이는지 확인합니다."
+  ],
+  "flow": [
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "#search",
+      "value": "구독",
+      "note": "앱의 검색 요청을 받도록 구독합니다."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$info",
+      "value": "n=Uno-IR;t=light.1",
+      "note": "이름, 분류, 화면 타입입니다. 서버에 보관됩니다."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$state",
+      "value": "on=0",
+      "note": "현재 상태입니다. 서버에 보관됩니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "#notify",
+      "value": "<cid>",
+      "note": "접속했음을 알립니다."
+    },
+    {
+      "from": "앱",
+      "to": "장치",
+      "tag": "#search",
+      "note": "앱이 시작할 때, 1초 뒤, 이후 15초마다 보냅니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "#notify",
+      "value": "<cid>",
+      "note": "검색에 자기 CID로 답합니다."
+    },
+    {
+      "from": "앱",
+      "to": "서버",
+      "tag": "<cid>@$info, $state",
+      "value": "구독",
+      "note": "보관된 정보와 상태를 바로 받아 카드를 만듭니다."
+    },
+    {
+      "from": "앱",
+      "to": "장치",
+      "tag": "<cid>@",
+      "value": "toggle",
+      "note": "버튼을 누르면 이름 그대로 명령이 갑니다. 장치가 받는 태그는 @입니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "@$state",
+      "value": "on=1",
+      "note": "명령을 처리한 뒤 상태를 보냅니다. 앱의 대기 표시가 풀립니다."
+    },
+    {
+      "from": "서버",
+      "to": "앱",
+      "tag": "<cid>@$state",
+      "value": "close",
+      "note": "장치가 끊기면 서버가 보내고 카드가 사라집니다."
+    },
+    {
+      "from": "장치",
+      "to": "bayo.tv",
+      "tag": "#screen",
+      "value": "next, prev, up, down, playToggle",
+      "note": "리모컨 입력을 영상 명령으로 바꿉니다."
+    },
+    {
+      "from": "장치",
+      "to": "다른 장치",
+      "tag": "cid1@",
+      "value": "toggle",
+      "note": "0x1E, 0x1A 버튼이 다른 장치를 토글합니다."
+    }
+  ],
+  "notes": [
+    "리모컨의 Command 값은 제품마다 다릅니다.",
+    "플래시를 95% 쓰고 있습니다."
+  ],
+  "library": "remocon",
+  "name": "uno-ethernet-ir",
+  "draft": false,
+  "approved": true,
+  "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/uno-ethernet-ir",
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/uno-ethernet-ir/uno-ethernet-ir.ino"
+}

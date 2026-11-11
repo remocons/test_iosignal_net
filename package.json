@@ -1,15 +1,16 @@
 {
   "name": "net_iosignal_client",
   "version": "1.0.0",
-  "description": "Open IOSignal communication workbench and Arduino tutorial controls",
+  "description": "IOSignal Arduino example pages and web communication lab",
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
     "dev": "node scripts/serve.mjs --local-server",
     "test": "node --test tests/*.test.mjs",
-    "build": "vite build",
+    "build": "node scripts/generate.mjs && vite build",
     "test:ui": "playwright test",
-    "demo:device": "node scripts/demo-device.mjs"
+    "demo:device": "node scripts/demo-device.mjs",
+    "generate": "node scripts/generate.mjs"
   },
   "keywords": [],
   "author": "",
