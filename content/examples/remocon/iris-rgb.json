@@ -125,5 +125,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-rgb",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-rgb/iris-rgb.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-rgb/iris-rgb.ino",
+  "media": []
 }

@@ -134,5 +134,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/uno-ethernet-button",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/uno-ethernet-button/uno-ethernet-button.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/uno-ethernet-button/uno-ethernet-button.ino",
+  "media": []
 }

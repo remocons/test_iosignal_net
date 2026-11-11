@@ -116,5 +116,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp01-relay-button",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp01-relay-button/esp01-relay-button.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp01-relay-button/esp01-relay-button.ino",
+  "media": []
 }

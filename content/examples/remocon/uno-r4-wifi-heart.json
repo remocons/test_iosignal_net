@@ -120,5 +120,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/uno-r4-wifi-heart",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/uno-r4-wifi-heart/uno-r4-wifi-heart.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/uno-r4-wifi-heart/uno-r4-wifi-heart.ino",
+  "media": []
 }

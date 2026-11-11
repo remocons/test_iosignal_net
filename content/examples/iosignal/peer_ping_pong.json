@@ -51,5 +51,6 @@
   "draft": true,
   "approved": false,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/peer_ping_pong",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/peer_ping_pong/peer_ping_pong.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/peer_ping_pong/peer_ping_pong.ino",
+  "media": []
 }

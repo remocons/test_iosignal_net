@@ -126,5 +126,13 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp8266_relay4ch",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266_relay4ch/esp8266_relay4ch.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266_relay4ch/esp8266_relay4ch.ino",
+  "media": [
+    {
+      "kind": "document",
+      "caption": "ESP-12F 4채널 릴레이 보드 자료 (PDF)",
+      "url": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266_relay4ch/ESP12F_Relay_X4.pdf",
+      "image": false
+    }
+  ]
 }

@@ -108,5 +108,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp8266-d1-mini",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266-d1-mini/esp8266-d1-mini.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266-d1-mini/esp8266-d1-mini.ino",
+  "media": []
 }

@@ -34,5 +34,6 @@
   "draft": true,
   "approved": false,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp32cam",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32cam/esp32cam.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32cam/esp32cam.ino",
+  "media": []
 }

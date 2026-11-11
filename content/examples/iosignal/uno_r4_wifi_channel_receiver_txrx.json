@@ -51,5 +51,6 @@
   "draft": true,
   "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/uno_r4_wifi_channel_receiver_txrx",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/uno_r4_wifi_channel_receiver_txrx/uno_r4_wifi_channel_receiver_txrx.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/uno_r4_wifi_channel_receiver_txrx/uno_r4_wifi_channel_receiver_txrx.ino",
+  "media": []
 }

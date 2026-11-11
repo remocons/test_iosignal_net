@@ -7,6 +7,8 @@ export const LIBRARIES = {
   iosignal: { label: 'IOSignal', about: '채널 신호를 주고받는 기본 통신 예제입니다.' },
   remocon: { label: 'Remocon', about: 'remocon.kr 웹앱이 찾고 제어하는 장치 예제입니다.' },
 };
+export const MEDIA_KINDS = { photo: '실사 사진', wiring: '배선도', schematic: '회로도', pinmap: '핀맵', document: '문서' };
+const MEDIA_ORDER = Object.keys(MEDIA_KINDS);
 export const KINDS = { device: '장치', group: '그룹', channel: '채널 송수신', camera: '카메라', other: '기타' };
 const KIND_ORDER = Object.keys(KINDS);
 
@@ -101,11 +103,23 @@ ${groups}
 
 const table = (head, rows) => `<div class="table-wrap"><table><thead><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 
+// Pictures first (photo, wiring, schematic, pinmap), then documents such as PDFs as links.
+export function renderMedia(media) {
+  const sorted = [...media].sort((a, b) => MEDIA_ORDER.indexOf(a.kind) - MEDIA_ORDER.indexOf(b.kind));
+  const label = (m) => MEDIA_KINDS[m.kind] ?? m.kind;
+  const images = sorted.filter((m) => m.image);
+  const docs = sorted.filter((m) => !m.image);
+  if (!images.length && !docs.length) return '<p class="placeholder">아직 등록된 사진과 회로도가 없습니다. 아래 배선 표를 참고하세요.</p>';
+  const figures = images.map((m) => `<figure class="media-${esc(m.kind)}"><a href="${esc(m.url)}" target="_blank" rel="noreferrer"><img src="${esc(m.url)}" alt="${esc(m.caption || label(m))}" loading="lazy"></a><figcaption><b>${esc(label(m))}</b>${m.caption ? ` ${esc(m.caption)}` : ''}</figcaption></figure>`).join('');
+  const links = docs.map((m) => `<li><a href="${esc(m.url)}" target="_blank" rel="noreferrer">${esc(m.caption || label(m))} ↗</a> <span class="hint">${esc(label(m))}</span></li>`).join('');
+  return `${figures ? `<div class="gallery">${figures}</div>` : '<p class="placeholder">아직 등록된 사진이 없습니다.</p>'}${links ? `<ul class="docs">${links}</ul>` : ''}`;
+}
+
 export function renderExample(ex) {
   const lib = LIBRARIES[ex.library];
   const lab = labLink(ex);
   const sections = [];
-  sections.push(`<section id="media"><h2>사진 · 회로도</h2><p class="placeholder">아직 등록된 사진과 회로도가 없습니다. 아래 배선 표를 참고하세요.</p></section>`);
+  sections.push(`<section id="media"><h2>사진 · 회로도</h2>${renderMedia(ex.media ?? [])}</section>`);
   const ready = [
     ...ex.boards.map((b) => `<li><b>보드</b> ${esc(b.name)}${b.note ? ` <span class="hint">(${esc(b.note)})</span>` : ''} <code>${esc(b.fqbn)}</code></li>`),
     ex.network ? `<li><b>네트워크</b> ${esc(ex.network)}</li>` : '',

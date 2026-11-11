@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { esc, exampleURL, labLink, layout, loadExamples, renderExample, renderHome } from '../scripts/site/pages.mjs';
+import { esc, exampleURL, labLink, layout, loadExamples, renderExample, renderHome, renderMedia } from '../scripts/site/pages.mjs';
 import { linkOptions } from '../public/lib/protocol.js';
 
 const content = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'content', 'examples');
@@ -53,4 +53,19 @@ test('exported examples load and every page renders', () => {
     assert.ok(ex.sketch.startsWith('https://github.com/remocons/'), ex.name);
   }
   assert.ok(layout({ title: 't', body: '' }).includes('href="/lab/"'));
+});
+
+test('media: pictures in a gallery (photo first), documents as links, a placeholder when empty', () => {
+  assert.match(renderMedia([]), /placeholder/);
+  const html = renderMedia([
+    { kind: 'document', caption: '자료 "PDF"', url: 'https://github.com/x/a.pdf', image: false },
+    { kind: 'wiring', caption: '', url: '/media/remocon/demo/wiring.png', image: true },
+    { kind: 'photo', caption: '완성 모습', url: '/media/remocon/demo/photo.jpg', image: true },
+  ]);
+  assert.ok(html.indexOf('photo.jpg') < html.indexOf('wiring.png'));
+  assert.match(html, /<img src="\/media\/remocon\/demo\/photo.jpg" alt="완성 모습" loading="lazy">/);
+  assert.match(html, /alt="배선도"/);
+  assert.ok(html.includes('자료 &quot;PDF&quot; ↗'));
+  assert.match(renderMedia([{ kind: 'document', caption: '', url: 'x.pdf', image: false }]), /아직 등록된 사진이 없습니다/);
+  assert.ok(renderExample({ ...sample, media: [{ kind: 'photo', caption: '', url: '/media/p.jpg', image: true }] }).includes('class="gallery"'));
 });

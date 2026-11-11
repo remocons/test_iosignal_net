@@ -115,5 +115,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-basic-control",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-basic-control/iris-basic-control.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-basic-control/iris-basic-control.ino",
+  "media": []
 }

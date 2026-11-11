@@ -43,5 +43,6 @@
   "draft": true,
   "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp32c3_duplicate_login",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32c3_duplicate_login/esp32c3_duplicate_login.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32c3_duplicate_login/esp32c3_duplicate_login.ino",
+  "media": []
 }

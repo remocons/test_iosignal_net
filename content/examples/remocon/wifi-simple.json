@@ -91,5 +91,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/wifi-simple",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/wifi-simple/wifi-simple.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/wifi-simple/wifi-simple.ino",
+  "media": []
 }

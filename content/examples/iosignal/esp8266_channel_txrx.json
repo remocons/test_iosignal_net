@@ -63,5 +63,6 @@
   "draft": true,
   "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp8266_channel_txrx",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp8266_channel_txrx/esp8266_channel_txrx.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp8266_channel_txrx/esp8266_channel_txrx.ino",
+  "media": []
 }

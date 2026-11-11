@@ -56,5 +56,6 @@
   "draft": true,
   "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/uno_ethernet_channel_txrx",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/uno_ethernet_channel_txrx/uno_ethernet_channel_txrx.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/uno_ethernet_channel_txrx/uno_ethernet_channel_txrx.ino",
+  "media": []
 }

@@ -89,5 +89,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp32-group-led",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp32-group-led/esp32-group-led.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp32-group-led/esp32-group-led.ino",
+  "media": []
 }

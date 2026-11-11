@@ -63,6 +63,14 @@ table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6}
 th{text-align:left;font-size:12px;color:#63736c;font-weight:700;border-bottom:2px solid #dbe3d8;padding:8px 10px 8px 0;white-space:nowrap}
 td{border-bottom:1px solid #e8ece4;padding:10px 10px 10px 0;vertical-align:top}
 code{font-family:ui-monospace,monospace;font-size:.9em;background:#f1f4ee;padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+/* Example media */
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.gallery figure{margin:0;border:1px solid #dbe3d8;border-radius:12px;overflow:hidden;background:#fafcf8}
+.gallery figure.media-photo{grid-column:1/-1}
+.gallery img{display:block;width:100%;height:auto;max-height:520px;object-fit:contain;background:#fff}
+.gallery figcaption{padding:10px 12px;font-size:13px;color:#4d5d57;line-height:1.6}
+.gallery figcaption b{color:#367361;margin-right:6px}
+.docs{margin:14px 0 0;padding-left:20px;line-height:1.9}
 #notes ul{margin:0;padding-left:20px;line-height:1.8}
 #flow td:nth-child(3) code,#wiring td:first-child code{white-space:nowrap;overflow-wrap:normal}
 #flow table{min-width:640px}

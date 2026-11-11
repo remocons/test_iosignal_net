@@ -1,10 +1,21 @@
-# IOSignal 통신 실습실
+# IOSignal 실습실
 
-Arduino·웹·Node.js의 시그널을 연결하고 확인하는 오픈소스 범용 웹앱입니다. HTML/CSS/JavaScript로 구성하며, 계정 관리 서비스 없이 사용할 수 있습니다. 라이선스는 MIT입니다.
+IOSignal과 Remocon 아두이노 예제를 예제별 페이지로 안내하고, 브라우저에서 시그널을 직접 주고받는 웹 실습실을 함께 제공하는 오픈소스 사이트입니다. HTML/CSS/JavaScript로 만들며, 계정 관리 서비스 없이 사용할 수 있습니다. 라이선스는 MIT입니다.
 
 <p align="center">
   <img src="docs/assets/iosignal-ecosystem.png" alt="IOSignal로 연결되는 서버, CLI, Node.js, Arduino와 원격 제어 웹앱" width="720" />
 </p>
+
+## 페이지
+
+| 주소 | 내용 |
+| --- | --- |
+| `/` | 예제 목록. IOSignal 예제와 Remocon 예제를 나눠 보여 줍니다. |
+| `/examples/<라이브러리>/<예제>/` | 예제 페이지. 사진·회로도, 준비물, 배선·핀맵, 사용 순서, 시그널 흐름, 참고, 소스 코드 링크 |
+| `/lab/` | 웹 실습실. 서버에 연결해 임의 태그를 보내고 구독하며 로그를 봅니다. |
+| `/webrtc/` | IOSignal을 시그널링에 쓰는 1:1 화상채팅 예제 ([webrtc/](webrtc/README.md)) |
+
+모든 페이지는 같은 상단 메뉴를 씁니다. 예전 주소 `/?preset=…`는 `/lab/`으로 이동합니다.
 
 ## 실행
 
@@ -15,11 +26,12 @@ npm ci
 npm start
 ```
 
-`http://localhost:8080`을 엽니다. 설치된 IOSignal npm 패키지의 브라우저 ESM을 직접 import합니다. 비공개 형제 저장소나 CDN에 의존하지 않습니다.
+`http://localhost:8080`을 엽니다. 실행할 때 예제 페이지를 먼저 만듭니다.
 
-- `npm start`: 웹 화면만 실행. 서버 URL을 입력해 기존 IOSignal 서버에 연결합니다.
+- `npm start`: 웹 화면만 실행합니다. 웹 실습실에서 서버 URL을 입력해 기존 IOSignal 서버에 연결합니다.
 - `npm run dev`: 로컬 웹 화면과 IOSignal 중계 서버를 함께 실행합니다.
-- `npm run build`: Vite로 npm 패키지를 번들링합니다. `dist/`가 정적 배포 결과입니다.
+- `npm run generate`: 예제 페이지만 다시 만듭니다.
+- `npm run build`: 예제 페이지를 만들고 Vite로 번들링합니다. `dist/`가 정적 배포 결과입니다.
 
 | 용도 | 로컬 기본값 |
 | --- | --- |
@@ -29,40 +41,65 @@ npm start
 
 `PORT`, `WS_PORT`, `TCP_PORT` 환경변수로 포트를 바꿀 수 있습니다. Arduino의 호스트에는 `localhost`가 아닌 PC의 LAN IP를 넣습니다. 웹 서버는 로컬 PC에서만 열리며, Arduino는 별도의 TCP 중계 포트에 연결합니다.
 
-공개 서버 사용 시 웹과 보드를 같은 서버에 맞추세요. 기존 IOSignal 예제는 `io.iosignal.net` / `wss://io.iosignal.net/ws`, Remocon 예제는 `io.remocon.kr` / `wss://io.remocon.kr/ws`를 기본으로 사용합니다.
+공개 서버를 쓸 때는 웹과 보드를 같은 서버에 맞추세요. IOSignal 예제는 `io.iosignal.net` / `wss://io.iosignal.net/ws`, Remocon 예제는 `io.remocon.kr` / `wss://io.remocon.kr/ws`를 기본으로 씁니다.
 
-## 기능
+## 예제 페이지의 내용
+
+예제 문서는 이 저장소에서 직접 쓰지 않습니다. 아두이노 예제의 원본 저장소가 예제마다 `_doc/example.json`과 사진·회로도를 관리하고, 공개 저장소([iosignal-arduino](https://github.com/remocons/iosignal-arduino), [remocon-arduino](https://github.com/remocons/remocon-arduino))에 올라간 예제만 이 저장소로 내보냅니다.
+
+| 위치 | 내용 |
+| --- | --- |
+| `content/examples/<라이브러리>/<예제>.json` | 내보낸 예제 문서 |
+| `static/media/<라이브러리>/<예제>/` | 내보낸 사진·회로도·핀맵 이미지. 사이트의 `/media/…`로 그대로 배포됩니다. |
+| `scripts/site/` | 페이지 틀과 웹 실습실 본문 |
+| `scripts/generate.mjs` | `public/` 아래에 `index.html`, `lab/index.html`, `examples/**/index.html`을 만듭니다. 이 파일들은 빌드 결과라 git에 넣지 않습니다. |
+
+`content/`와 `static/media/`는 손으로 고치지 말고 원본 저장소에서 다시 내보내세요. 페이지 모양은 `scripts/site/pages.mjs`와 `public/style.css`에서 바꿉니다.
+
+예제 페이지의 상태 배지는 다음 뜻입니다.
+
+- **초안 · 실물 미확인**: 코드를 보고 쓴 설명이며 실제 보드로 확인하지 않았습니다.
+- **실물 확인 예제**: 실제 보드로 확인한 기록이 있습니다.
+
+## 웹 실습실
 
 - 서버 URL 입력, ready·CID 확인, 선택적 ID_KEY 인증
 - 임의 태그 송신, 구독 목록 적용·전체 해제, 재접속 시 재구독
 - EMPTY, TEXT, BINARY HEX, JSON 객체·배열·null, 여러 인자 입력
 - 최근 200건 TX/RX 로그, 타입·바이트 표시, 필터·복사·표시 일시정지
-- 기본 버튼, CID 장치 제어, 그룹 LED, RGB, 모터 PWM, 방향 문자열 프리셋
 
-TX는 송신 호출이며 실행 완료 확인이 아닙니다. 같은 태그를 구독하면 자신의 메시지가 RX로 들어올 수 있습니다. 장치의 적용 결과는 CID 상태 발행 등을 통해 확인하세요. 인증키는 연결 생성 시 사용하고 입력창을 비우며, 저장소·로그·프리셋에 저장하지 않습니다. 인증키 발급이나 계정 관리 기능은 제공하지 않습니다.
+TX는 송신 호출이며 실행 완료 확인이 아닙니다. 같은 태그를 구독하면 자신의 메시지가 RX로 들어올 수 있습니다. 장치의 적용 결과는 장치가 보내는 상태로 확인하세요. 인증키는 연결할 때만 쓰고 입력창을 비우며, 저장소·로그·템플릿에 저장하지 않습니다. 인증키 발급이나 계정 관리 기능은 제공하지 않습니다.
 
-## 프리셋과 Arduino 예제
+### 템플릿
 
-| 프리셋 | 예제 | 규약 |
+템플릿은 장치 검색·제어 규칙(key=value 정보와 상태, `#search`/`#notify`, `<cid>@` 명령, 그룹 채널의 `#채널$state`)을 따릅니다.
+
+| 템플릿 | 태그 | 대상 |
 | --- | --- | --- |
-| 기본 송수신 | IOSignal `esp32_channel_txrx` | `#homeButton`, TEXT |
-| 장치 개별 제어 | Remocon `esp32-cid-led` | 검색 → CID@ 명령 → CID@$state |
-| 그룹 LED | Remocon `esp32-group-led` | `#lab$states`, 두 자리 TEXT |
-| ESP32-S3 RGB | Remocon `esp32s3-ws2812` | `#robot`, R/G/B/미사용 4바이트 |
-| 모터 PWM | M1A/M1B/M2A/M2B 규약 장치 | `#robot`, 4바이트 |
-| 방향 문자열 | u/l/s/r/d 규약 장치 | `#robot`, TEXT |
+| 채널 송수신 (`basic`) | `#homeButton`, TEXT | IOSignal 채널 예제 (`esp8266_channel_txrx` 등) |
+| 장치 제어 (`cid`) | `#search` → `<cid>@` 명령 → `<cid>@$info`, `<cid>@$state` | Remocon 장치 예제 |
+| 그룹 공유 상태 (`group`) | `#switch$state`, `s1=1;s2=0;s3=0` | Remocon 그룹 예제 (`wifi-simple`, `esp32-group-led` 등) |
+| 모터 PWM 4바이트 (`motor`) | `#robot`, M1A/M1B/M2A/M2B 4바이트 | 규약에 맞는 별도 장치 |
+| 방향 문자열 (`direction`) | `#robot`, u/l/s/r/d TEXT | 규약에 맞는 별도 장치 |
 
-모터·방향은 규약에 맞는 별도 장치용 도구이며 이 저장소에서 실물 로봇 검증을 제공하지 않습니다. 모터 장치에는 통신 타임아웃 정지를 구현하세요. RGB와 모터가 같은 태그를 사용하면 함께 수신할 수 있으므로, 서로 다른 용도는 양쪽 태그를 분리해야 합니다.
+모터·방향은 규약에 맞는 별도 장치용 도구이며 이 저장소에서 실물 로봇 검증을 제공하지 않습니다. 모터 장치에는 통신 타임아웃 정지를 구현하세요.
 
-`?preset=basic`, `cid`, `group`, `rgb`, `motor`, `direction`으로 프리셋을 선택해 열 수 있습니다. 연결·송신은 사용자가 직접 실행합니다.
+주소로 템플릿과 값을 미리 채울 수 있습니다. 예제 페이지의 "웹 실습실에서 열기"가 이 방식을 씁니다. 연결과 송신은 사용자가 직접 실행합니다.
 
-[ESP32 실습 튜토리얼](https://iosignal.net/docs/examples/workbench/start) · [시그널 태그](https://iosignal.net/docs/core/signal_tags)
+```
+/lab/?preset=group&tag=%23lab%24state&sub=%23lab%24state
+```
 
-튜토리얼과 새 UI는 소스 기준이며 사이트 배포 전에는 운영 주소에 반영되지 않을 수 있습니다.
+| 매개변수 | 뜻 |
+| --- | --- |
+| `preset` | `basic`, `cid`, `group`, `motor`, `direction` |
+| `tag` | 송신 태그 |
+| `value`, `type` | 보낼 값과 형식(`text`, `empty`, `hex`, `json`, `args`) |
+| `sub` | 구독 태그, 쉼표로 구분 |
 
 ## 보드 없이 CID 흐름 체험
 
-`npm run dev`로 로컬 서버를 실행한 상태에서 다른 터미널에 `npm run demo:device`를 실행합니다. 웹에서 CID 프리셋으로 연결하고 장치 찾기를 누르면 `Simulated LED`를 제어할 수 있습니다. 콘솔과 상태 메시지만 바뀌는 모의 장치이며 실제 GPIO 동작은 아닙니다.
+`npm run dev`로 로컬 서버를 실행한 상태에서 다른 터미널에 `npm run demo:device`를 실행합니다. 웹 실습실에서 `ws://localhost:7777`에 연결하고 장치 제어 템플릿의 장치 찾기를 누르면 `Simulated LED`를 제어할 수 있습니다. 콘솔과 상태 메시지만 바뀌는 모의 장치이며 실제 GPIO 동작은 아닙니다.
 
 ## 개발과 검증
 
@@ -72,30 +109,30 @@ npx playwright install chromium
 npm run test:ui
 ```
 
-이미 설치된 Chrome을 쓰려면 `CHROME_PATH`에 실행 파일 경로를 지정합니다. `npm test`는 공개 IOSignal 서버를 로컬에서 띄워 발견·CID·리테인·payload를 검증합니다. UI 검사는 별도 로컬 포트 18080/17777/55489를 사용합니다. 서버·장치는 모의 클라이언트이며 실제 Arduino 검증을 대신하지 않습니다.
+이미 설치된 Chrome을 쓰려면 `CHROME_PATH`에 실행 파일 경로를 지정합니다. `npm test`는 페이지 생성과 입력 규칙을 검사하고, 공개 IOSignal 서버를 로컬에서 띄워 검색·CID·보관 상태·payload를 확인합니다. UI 검사는 별도 로컬 포트 18080/17777/55489를 쓰며 홈 → 예제 페이지 → 웹 실습실 흐름과 실습실 송수신, 모바일 화면을 확인합니다. 서버·장치는 모의 클라이언트이며 실제 Arduino 검증을 대신하지 않습니다.
 
 소스 구조:
 
-- `public/lib/protocol.js`: 프리셋과 입력·표시 규칙
-- `public/client.js`: 연결·구독·제어·로그 UI
-- `scripts/serve.mjs`: Vite 개발 서버 및 선택적 IOSignal 중계 서버
-- `tests/`: 입력·실제 로컬 통신·브라우저 검사
-- `vite.config.js`: 개발 서버와 `dist/` 배포 빌드 설정
+- `scripts/site/pages.mjs`: 공통 메뉴, 홈 목록, 예제 페이지 틀
+- `scripts/site/lab-body.html`: 웹 실습실 본문
+- `scripts/generate.mjs`: 페이지 생성
+- `public/lab/lab.js`: 웹 실습실의 연결·구독·제어·로그 UI
+- `public/lib/protocol.js`: 템플릿과 입력·표시 규칙, 주소 매개변수
+- `public/style.css`: 모든 페이지의 스타일
+- `scripts/serve.mjs`: 페이지 생성 후 Vite 개발 서버와 선택적 IOSignal 중계 서버 실행
+- `tests/`: 페이지 생성·입력·실제 로컬 통신·브라우저 검사
+- `vite.config.js`: 다중 페이지 빌드 설정. `static/`의 파일은 그대로 복사합니다.
 
-공개 서버 접속은 HTTPS/WSS를 권장합니다. HTTP·HTTPS와 로컬 연결 조건은 아래 표를 참고하세요. HTTP 접속 환경에서는 클립보드 API가 제한될 수 있어 로그 텍스트를 직접 선택해 복사할 수 있습니다.
+배포는 자동 실행하지 않습니다. `npm run build` 이후 `dist/`를 원하는 정적 호스팅에 배포하세요. `./upload.sh`는 빌드 후 기존 서버 `ia:/home/ubuntu/sites/test_iosignal_net/`로 전송합니다. 다른 대상은 `DEPLOY_TARGET` 환경변수로 지정합니다. `/webrtc/`는 `webrtc/`에서 따로 빌드해 배포합니다.
 
-배포는 자동 실행하지 않습니다. `npm run build` 이후 `dist/`를 원하는 정적 호스팅에 배포하세요. `./upload.sh`는 빌드 후 기존 서버 `ia:/home/ubuntu/sites/test_iosignal_net/`로 전송합니다. 다른 대상은 `DEPLOY_TARGET` 환경변수로 지정합니다.
+## 패키지
 
-## 패키지와 보드 선택
-
-브라우저 코드는 `import IO from 'iosignal/io'`로 설치한 npm 패키지의 브라우저 ESM을 사용합니다. vendor 파일 복사는 필요하지 않습니다. `package-lock.json`으로 재현 가능한 설치를 유지하며 `npm install iosignal@latest`로 의도적으로 업데이트할 수 있습니다. 상단 버전은 실행 중인 `IO.version`에서 읽습니다.
-
-보드 선택: ESP32-C3 Super Mini, D1 mini, ESP-01, iris, ESP32, ESP32-S3. 보드를 선택하면 알맞은 제어 프리셋과 튜토리얼 링크를 제공합니다. 서버는 자동 변경하지 않습니다. Remocon 예제 기본 서버에 연결할 때는 `wss://io.remocon.kr/ws`를 입력하세요. iris는 DIP와 같은 그룹 번호(0~7)를 선택합니다. ESP-01은 `Relay`/`LED` 명령을 사용합니다.
+브라우저 코드는 `import IO from 'iosignal/io'`로 설치한 npm 패키지의 브라우저 ESM을 사용합니다. vendor 파일 복사는 필요하지 않습니다. `package-lock.json`으로 재현 가능한 설치를 유지하며 `npm install iosignal@latest`로 의도적으로 업데이트할 수 있습니다. 웹 실습실 상단 버전은 실행 중인 `IO.version`에서 읽습니다.
 
 ## HTTP / HTTPS와 WebSocket 선택
 
-- [HTTPS 웹앱](https://test.iosignal.net/): 공개 WSS 서버 접속의 기본 주소입니다.
-- [HTTP 웹앱](http://test.iosignal.net/): WS 실습용 대안입니다. HTTP로 바꿔도 브라우저의 로컬 네트워크 접근 제한이 모두 해결되지는 않습니다.
+- [HTTPS 웹 실습실](https://test.iosignal.net/lab/): 공개 WSS 서버 접속의 기본 주소입니다.
+- [HTTP 웹 실습실](http://test.iosignal.net/lab/): WS 실습용 대안입니다. HTTP로 바꿔도 브라우저의 로컬 네트워크 접근 제한이 모두 해결되지는 않습니다.
 
 상단에 현재 HTTP/HTTPS 접속 방식이 표시됩니다. 전환 버튼은 제공하지 않습니다. HTTPS에서 WS 연결이 차단되면 브라우저 주소창에 `http://test.iosignal.net`을 직접 입력하여 새로 접속하세요. 기본 `npm start`는 HTTP만 제공합니다.
 

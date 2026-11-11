@@ -146,5 +146,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/Remocon8266-4ch-control",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266-4ch-control/Remocon8266-4ch-control.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266-4ch-control/Remocon8266-4ch-control.ino",
+  "media": []
 }

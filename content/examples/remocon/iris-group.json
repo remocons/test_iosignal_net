@@ -122,5 +122,6 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-group",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-group/iris-group.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-group/iris-group.ino",
+  "media": []
 }

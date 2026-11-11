@@ -59,5 +59,6 @@
   "draft": true,
   "approved": false,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp01_channel_txrx",
-  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp01_channel_txrx/esp01_channel_txrx.ino"
+  "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp01_channel_txrx/esp01_channel_txrx.ino",
+  "media": []
 }

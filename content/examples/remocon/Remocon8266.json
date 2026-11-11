@@ -154,5 +154,13 @@
   "draft": false,
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/Remocon8266",
-  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266/Remocon8266.ino"
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266/Remocon8266.ino",
+  "media": [
+    {
+      "kind": "schematic",
+      "caption": "Remocon8266 보드 회로도 (PDF)",
+      "url": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266/Schematic_Remocon8266_2024-01-20.pdf",
+      "image": false
+    }
+  ]
 }

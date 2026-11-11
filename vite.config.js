@@ -12,7 +12,8 @@ const pages = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry)
 const input = Object.fromEntries(pages(root).map((file) => [path.relative(root, path.dirname(file)) || 'home', file]));
 
 export default defineConfig({
-  root: 'public', publicDir: false, appType: 'mpa',
+  // static/ (exported media) is copied as is and served at /media/….
+  root: 'public', publicDir: '../static', appType: 'mpa',
   build: { outDir: '../dist', emptyOutDir: true, rollupOptions: { input } },
   server: { host: '127.0.0.1', port: Number(process.env.PORT || 8080), strictPort: true },
 });
