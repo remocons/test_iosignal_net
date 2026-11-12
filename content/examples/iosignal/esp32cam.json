@@ -13,7 +13,7 @@
   "partners": [],
   "wiring": [],
   "setup": [
-    "스케치의 WiFi 이름과 비밀번호를 바꿉니다.",
+    "Wi-Fi는 업로드한 뒤 USB로 연결해 https://test.iosignal.net/wifi/ (보드 설정)에서 넣습니다(데스크톱 Chrome·Edge, 보드가 저장). 같은 페이지에서 다른 IOSignal 서버(호스트:포트)와 장치 키도 넣을 수 있습니다. 스케치의 Wi-Fi 값에 실제 값을 쓰면 그 값이 부팅할 때마다 우선합니다. 예전 버전의 스케치에 들어 있던 장치 키는 지웠으므로, 키가 필요하면 보드 설정에서 넣습니다.",
     "인증값과 YOUR_E2E_KEY를 본인 값으로 바꿉니다. index.html에도 같은 키를 넣습니다.",
     "업로드 후 index.html을 브라우저로 엽니다."
   ],
@@ -35,5 +35,7 @@
   "approved": false,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp32cam",
   "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp32cam/esp32cam.ino",
+  "boardSetup": true,
+  "settings": [],
   "media": []
 }

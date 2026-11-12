@@ -27,7 +27,7 @@
     }
   ],
   "setup": [
-    "스케치의 WiFi 이름과 비밀번호를 실제 값으로 바꿉니다.",
+    "Wi-Fi는 업로드한 뒤 USB로 연결해 https://test.iosignal.net/wifi/ (보드 설정)에서 넣습니다(데스크톱 Chrome·Edge, 보드가 저장). 같은 페이지에서 다른 IOSignal 서버(호스트:포트)와 장치 키도 넣을 수 있습니다. 스케치의 Wi-Fi 값에 실제 값을 쓰면 그 값이 부팅할 때마다 우선합니다.",
     "스케치를 업로드하고 시리얼 모니터 115200을 엽니다.",
     "같은 공유기에 연결한 브라우저로 https://remocon.kr 을 엽니다.",
     "공유 스위치를 눌러 시리얼에 s1=1 같은 값이 나오는지 봅니다."
@@ -92,5 +92,7 @@
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/wifi-simple",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/wifi-simple/wifi-simple.ino",
+  "boardSetup": true,
+  "settings": [],
   "media": []
 }

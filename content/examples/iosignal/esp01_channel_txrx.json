@@ -24,7 +24,7 @@
     }
   ],
   "setup": [
-    "스케치의 WIFI_SSID와 비밀번호를 실제 값으로 바꿉니다.",
+    "Wi-Fi는 업로드한 뒤 설정 모드에서 넣습니다. 저장된 Wi-Fi가 없거나 켠 뒤 3초 안에 버튼을 누르고 있으면 다음 리셋까지 GPIO1이 LED 대신 시리얼(TX)이 됩니다. 이때 USB-TTL로 https://test.iosignal.net/wifi/ 에서 Wi-Fi와(원하면) 서버, 장치 키를 넣습니다. 스케치의 Wi-Fi 값에 실제 값을 써도 됩니다.",
     "보드에 맞게 핀 번호를 확인합니다.",
     "컴파일하고 업로드합니다.",
     "브라우저로 http://test.iosignal.net 에 접속해 확인합니다."
@@ -60,5 +60,7 @@
   "approved": false,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp01_channel_txrx",
   "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp01_channel_txrx/esp01_channel_txrx.ino",
+  "boardSetup": true,
+  "settings": [],
   "media": []
 }

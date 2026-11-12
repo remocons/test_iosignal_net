@@ -39,7 +39,7 @@
     }
   ],
   "setup": [
-    "스케치 폴더에 _secrets.h를 만들어 SECRET_WIFI_SSID, SECRET_WIFI_PASS를 #define합니다(장치 키를 쓰면 SECRET_ID_KEY도). 파일이 없으면 스케치의 WIFI_SSID, WIFI_PASS 값을 직접 바꿉니다.",
+    "Wi-Fi는 업로드한 뒤 USB로 연결해 https://test.iosignal.net/wifi/ (보드 설정)에서 넣습니다(데스크톱 Chrome·Edge, 보드가 저장). 같은 페이지에서 다른 IOSignal 서버(호스트:포트)와 장치 키도 넣을 수 있습니다. 스케치의 Wi-Fi 값에 실제 값을 쓰면 그 값이 부팅할 때마다 우선합니다. _secrets.h에 SECRET_WIFI_SSID, SECRET_WIFI_PASS(장치 키는 SECRET_ID_KEY)를 #define해도 됩니다.",
     "USB-TTL 어댑터를 프로그래밍 포트(GND, RX, TX, 5V)에 연결하고 IO0을 GND에 연결한 채 리셋합니다.",
     "arduino-cli compile --upload -p <포트> --fqbn esp8266:esp8266:generic 로 업로드합니다(Arduino IDE는 Generic ESP8266 Module).",
     "업로드 후 IO0을 떼고 리셋하면 스케치가 실행됩니다.",
@@ -127,6 +127,8 @@
   "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp8266_relay4ch",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp8266_relay4ch/esp8266_relay4ch.ino",
+  "boardSetup": true,
+  "settings": [],
   "media": [
     {
       "kind": "document",
