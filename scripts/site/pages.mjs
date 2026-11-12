@@ -175,7 +175,24 @@ export function renderMedia(media) {
   return `${figures ? `<div class="gallery">${figures}</div>` : '<p class="placeholder">아직 등록된 사진이 없습니다.</p>'}${links ? `<ul class="docs">${links}</ul>` : ''}`;
 }
 
-export function renderExample(ex, types = {}) {
+// The install section, when a prebuilt firmware exists (static/firmware/<library>/<name>/firmware.json).
+export function renderInstall(ex, firmware) {
+  if (!firmware) return '';
+  const manifest = `/firmware/${ex.library}/${ex.name}/manifest.json`;
+  const boards = firmware.boards.map((b) => `<span class="badge">${esc(b.name)} · ${esc(b.chip)}</span>`).join('');
+  return `<section id="install"><h2>펌웨어 설치</h2>
+<p>미리 빌드한 이 예제의 펌웨어를 USB로 연결한 보드에 브라우저에서 바로 설치합니다. 설치가 끝나면 Wi-Fi 입력 창이 이어집니다.</p>
+<p class="badges">${boards}<span class="badge">버전 <code>${esc(firmware.version)}</code></span></p>
+<esp-web-install-button manifest="${esc(manifest)}"><button slot="activate" class="button">이 보드에 설치</button><span slot="unsupported" class="hint warn-box">이 브라우저는 Web Serial을 지원하지 않습니다. 데스크톱 Chrome이나 Edge에서 여세요.</span><span slot="not-allowed" class="hint warn-box">HTTPS 주소에서만 설치할 수 있습니다.</span></esp-web-install-button>
+<ul class="hint install-notes">
+<li>이미 IOSignal Wi-Fi 설정을 쓰는 펌웨어가 있으면 <b>업데이트</b>로 설치되고 저장된 Wi-Fi가 그대로 남습니다.</li>
+<li>다른 펌웨어가 있으면 “Erase device” 확인 창이 나옵니다. 체크하지 않으면 칩에 저장된 Wi-Fi를 지우지 않습니다. 체크하면 모두 지우고 Wi-Fi를 다시 넣습니다.</li>
+<li>Wi-Fi만 바꾸려면 <a href="/wifi/">Wi-Fi 설정</a> 페이지를 쓰세요. 시리얼 모니터가 포트를 쓰고 있으면 먼저 닫습니다.</li>
+<li>펌웨어에는 Wi-Fi 비밀번호나 장치 키가 들어 있지 않습니다. 익명 CID로 접속합니다.</li>
+</ul></section>`;
+}
+
+export function renderExample(ex, types = {}, firmware = null) {
   const panel = panelConfig(ex, types);
   const lib = LIBRARIES[ex.library];
   const lab = labLink(ex);
@@ -191,6 +208,7 @@ export function renderExample(ex, types = {}) {
   sections.push(`<section id="wiring"><h2>배선 · 핀맵</h2>${ex.wiring?.length
     ? table(['보드 핀', '연결', '비고'], ex.wiring.map((w) => [`<code>${esc(w.pin)}</code>`, esc(w.part), esc(w.note)]))
     : '<p>따로 배선할 부품이 없습니다.</p>'}</section>`);
+  if (firmware) sections.push(renderInstall(ex, firmware));
   if (ex.setup?.length) sections.push(`<section id="steps"><h2>사용 순서</h2><ol class="steps">${ex.setup.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></section>`);
   sections.push(renderPanel(ex, panel));
   if (ex.flow?.length) sections.push(`<section id="flow"><h2>시그널 흐름</h2>${table(['보내는 쪽', '받는 쪽', '태그', '값', '설명'],
@@ -204,5 +222,5 @@ export function renderExample(ex, types = {}) {
 <p class="badges"><span class="badge">${esc(KINDS[ex.kind] ?? ex.kind)}</span>${ex.boards.map((b) => `<span class="badge">${esc(b.name)}</span>`).join('')}${statusBadge(ex)}</p></header>
 ${sections.join('\n')}
 </main>`;
-  return layout({ title: `${ex.title} · IOSignal 실습실`, description: ex.summary, active: 'examples', body, scripts: panel ? ['/example/panel.js'] : [] });
+  return layout({ title: `${ex.title} · IOSignal 실습실`, description: ex.summary, active: 'examples', body, scripts: [...(panel ? ['/example/panel.js'] : []), ...(firmware ? ['/example/install.js'] : [])] });
 }

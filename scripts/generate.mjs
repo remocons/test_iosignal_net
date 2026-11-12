@@ -1,6 +1,6 @@
 // Writes the generated pages into public/: index.html, lab/index.html, wifi/index.html, examples/**/index.html.
 // These files are build output (see .gitignore); edit scripts/site/ and content/ instead.
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exampleURL, layout, loadExamples, loadTypes, renderExample, renderHome } from './site/pages.mjs';
@@ -28,7 +28,12 @@ export function generate() {
   }));
   write('examples/index.html', layout({ title: '예제 · IOSignal 실습실', active: 'examples',
     body: '<main class="doc"><p><a href="/">예제 목록으로 이동합니다.</a></p></main><script>location.replace("/")</script>' }));
-  for (const ex of examples) write(path.join(exampleURL(ex), 'index.html'), renderExample(ex, types));
+  // Prebuilt firmware from the Arduino repository (npm run site:firmware there), when present.
+  const firmwareOf = (ex) => {
+    const file = path.join(root, 'static', 'firmware', ex.library, ex.name, 'firmware.json');
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : null;
+  };
+  for (const ex of examples) write(path.join(exampleURL(ex), 'index.html'), renderExample(ex, types, firmwareOf(ex)));
   return examples.length;
 }
 

@@ -12,3 +12,6 @@ public/index.html
 public/lab/index.html
 public/wifi/index.html
 public/examples/
+
+# Built by npm run site:firmware in the Arduino repository
+static/firmware/

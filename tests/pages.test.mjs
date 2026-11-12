@@ -69,3 +69,17 @@ test('media: pictures in a gallery (photo first), documents as links, a placehol
   assert.match(renderMedia([{ kind: 'document', caption: '', url: 'x.pdf', image: false }]), /아직 등록된 사진이 없습니다/);
   assert.ok(renderExample({ ...sample, media: [{ kind: 'photo', caption: '', url: '/media/p.jpg', image: true }] }).includes('class="gallery"'));
 });
+
+test('install section appears only with a prebuilt firmware', async () => {
+  const { renderExample, renderInstall } = await import('../scripts/site/pages.mjs');
+  const ex = {
+    library: 'remocon', name: 'demo', title: 'Demo', summary: 's', kind: 'device', boards: [{ name: 'ESP32', fqbn: 'esp32:esp32:esp32' }],
+    sketch: 'https://example.invalid/s', source: 'https://example.invalid/f',
+  };
+  const firmware = { version: '9.12.0+demo.abc', boards: [{ name: 'ESP32', fqbn: 'esp32:esp32:esp32', chip: 'ESP32' }] };
+  assert.equal(renderInstall(ex, null), '');
+  const html = renderExample(ex, {}, firmware);
+  assert.match(html, /<esp-web-install-button manifest="\/firmware\/remocon\/demo\/manifest.json">/);
+  assert.match(html, /src="\/example\/install.js"/);
+  assert.doesNotMatch(renderExample(ex, {}), /esp-web-install-button|install\.js/);
+});

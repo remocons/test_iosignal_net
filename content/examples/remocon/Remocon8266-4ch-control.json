@@ -49,9 +49,9 @@
     }
   ],
   "setup": [
-    "스케치 폴더에 _secrets.h를 만들어 SECRET_WIFI_SSID, SECRET_WIFI_PASS를 #define합니다(제어기에 키를 쓰려면 릴레이와 다른 키로 SECRET_ID_KEY도). 파일이 없으면 스케치의 WIFI_SSID, WIFI_PASS 값을 직접 바꿉니다.",
+    "펌웨어를 올립니다. https://test.iosignal.net 의 이 예제 페이지에서 '이 보드에 설치'를 누르거나(데스크톱 Chrome·Edge), arduino-cli compile --upload -p <포트> --fqbn esp8266:esp8266:d1_mini 로 업로드합니다(Arduino IDE는 LOLIN(WEMOS) D1 R2 & mini).",
     "릴레이 보드에 esp8266_relay4ch를 올리고 장치 키로 CID를 고정합니다.",
-    "arduino-cli compile --upload -p <포트> --fqbn esp8266:esp8266:d1_mini 로 업로드합니다(Arduino IDE는 LOLIN(WEMOS) D1 R2 & mini).",
+    "Wi-Fi는 설치 직후 이어지는 창이나 https://test.iosignal.net/wifi/ 에서 USB로 넣습니다. 보드가 저장하므로 다시 넣을 필요가 없습니다. 스케치 폴더의 _secrets.h(SECRET_WIFI_SSID, SECRET_WIFI_PASS)나 스케치의 WIFI_SSID에 실제 값을 쓰면 그 값이 부팅할 때마다 우선합니다. 제어기에 키를 쓰려면 릴레이와 다른 키로 SECRET_ID_KEY를 넣습니다.",
     "OLED에 Relay <대상 CID>와 상자 4개가 나오면 버튼을 눌러 봅니다. 맨 아래 줄은 이 제어기의 CID입니다.",
     "대상을 바꾸려면 카드의 Target CID에 입력하거나 remocon pub \"<제어기 cid>@\" \"target=<cid>\" 를 보냅니다."
   ],

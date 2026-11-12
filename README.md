@@ -53,6 +53,7 @@ npm start
 | `content/types/<이름>.<major>.json` | 예제가 쓰는 remocon.kr 공식 타입 파일 |
 | `static/media/<라이브러리>/<예제>/` | 내보낸 사진·회로도·핀맵 이미지. 사이트의 `/media/…`로 그대로 배포됩니다. |
 | `scripts/site/` | 페이지 틀과 웹 실습실 본문 |
+| `static/firmware/<라이브러리>/<예제>/` | 미리 빌드한 펌웨어와 ESP Web Tools manifest. 원본 저장소의 `npm run site:firmware`가 만들며 git에 넣지 않습니다. 있으면 예제 페이지에 '이 보드에 설치' 버튼이 나옵니다. |
 | `scripts/generate.mjs` | `public/` 아래에 `index.html`, `lab/index.html`, `examples/**/index.html`을 만듭니다. 이 파일들은 빌드 결과라 git에 넣지 않습니다. |
 
 `content/`와 `static/media/`는 손으로 고치지 말고 원본 저장소에서 다시 내보내세요. 페이지 모양은 `scripts/site/pages.mjs`와 `public/style.css`에서 바꿉니다.
