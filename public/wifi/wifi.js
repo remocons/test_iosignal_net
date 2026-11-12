@@ -1,5 +1,5 @@
 // Sets Wi-Fi on an ESP32/ESP8266 board over USB (Web Serial + Improv Wi-Fi Serial).
-import { COMMAND, ERROR, Parser, STATE, TYPE, decodeResult, rpc, wifiSettings } from '/lib/improv.js';
+import { COMMAND, ERROR, Parser, STATE, TYPE, decodeResult, decodeSettings, parseServer, rpc, settingsUpdate, wifiSettings } from '/lib/improv.js';
 
 const $ = (id) => document.getElementById(id);
 const ui = {
@@ -7,7 +7,11 @@ const ui = {
   ssid: $('ssid'), password: $('password'), networks: $('networks'), form: $('wifiForm'),
   state: $('state'), deviceName: $('deviceName'), chip: $('chip'), firmware: $('firmware'),
   result: $('result'), log: $('serialLog'),
+  serverSection: $('serverSection'), serverForm: $('serverForm'), server: $('server'), idKey: $('idKey'),
+  clearKey: $('clearKey'), defaultServer: $('defaultServer'), applyServer: $('applyServer'), serverResult: $('serverResult'),
+  currentServer: $('currentServer'), currentKey: $('currentKey'), noStorage: $('noStorage'),
 };
+const SOURCE = { stored: '브라우저에서 저장', sketch: '스케치 기본값' };
 const STATE_TEXT = {
   ready: '연결됨 · Wi-Fi 미접속', provisioning: 'Wi-Fi 접속 시도 중…', provisioned: '연결됨 · Wi-Fi 접속됨',
 };
@@ -58,7 +62,7 @@ function request(command, data = [], timeout = 3000) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => { pending = null; reject(new Error('timeout')); }, timeout);
     pending = { command, resolve, reject, timer };
-    const bytes = command === COMMAND.WIFI ? data : rpc(command, data);
+    const bytes = data instanceof Uint8Array ? data : rpc(command, data); // a ready packet, or RPC data
     write(bytes).catch((err) => { clearTimeout(timer); pending = null; reject(err); });
   });
 }
@@ -120,6 +124,7 @@ async function hello() {
       ui.deviceName.textContent = name || '—';
       ui.chip.textContent = chip || '—';
       ui.firmware.textContent = [firmware, version].filter(Boolean).join(' ') || '—';
+      await loadSettings();
       return;
     } catch (err) {
       if (err.message !== 'timeout') { log(`[요청 오류] ${err.message}`); return; }
@@ -149,6 +154,65 @@ ui.connect.addEventListener('click', async () => {
   hello();
 });
 
+// IOSignal server and key (IOSignalWiFi firmware only; older firmware answers "unknown command").
+function showSettings(st) {
+  ui.currentServer.textContent = `${st.host}:${st.port} (${st.hostSource === 'stored' || st.portSource === 'stored' ? SOURCE.stored : SOURCE.sketch})`;
+  ui.currentKey.textContent = st.keySource === 'none' ? '없음 · 익명 접속' : `id ${st.keyId} (${SOURCE[st.keySource] ?? st.keySource})`;
+  ui.noStorage.hidden = st.storage;
+  for (const el of [ui.server, ui.idKey, ui.clearKey, ui.defaultServer, ui.applyServer]) el.disabled = !st.storage;
+  ui.clearKey.disabled ||= st.keySource !== 'stored';
+}
+
+async function loadSettings() {
+  try {
+    showSettings(decodeSettings(await request(COMMAND.GET_SETTINGS)));
+    ui.serverSection.hidden = false;
+  } catch (err) {
+    ui.serverSection.hidden = true;
+    if (err.message !== 'unknown-command' && err.message !== 'timeout') log(`[서버 설정 읽기 오류] ${err.message}`);
+  }
+}
+
+// The board restarts after a change; ask again once it is back.
+async function applySettings(values) {
+  let bytes;
+  try { bytes = settingsUpdate(values); } catch (err) { ui.serverResult.textContent = err.message; return; }
+  ui.applyServer.disabled = true;
+  ui.serverResult.textContent = '보드에 보냈습니다…';
+  try {
+    const st = decodeSettings(await request(COMMAND.SET_SETTINGS, bytes, 5000));
+    showSettings(st);
+    ui.server.value = '';
+    ui.serverResult.textContent = '저장했습니다. 보드가 재시작합니다. 시리얼 로그에서 접속을 확인하세요.';
+    ui.state.textContent = '재시작 중…';
+    setTimeout(() => { if (port) hello(); }, 3000);
+  } catch (err) {
+    ui.serverResult.textContent = err.message === 'timeout' ? '보드가 응답하지 않습니다.'
+      : err.message === 'invalid' ? '보드가 값을 받지 않았습니다. 형식을 확인하세요.'
+      : err.message === 'unknown' ? '보드가 저장하지 못했습니다.' : (ERROR_TEXT[err.message] ?? err.message);
+  } finally {
+    ui.idKey.value = '';
+    ui.clearKey.checked = false;
+    ui.applyServer.disabled = !port;
+  }
+}
+
+ui.serverForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  let values = {};
+  if (ui.server.value.trim()) {
+    try { values = parseServer(ui.server.value); } catch (err) { ui.serverResult.textContent = err.message; return; }
+  }
+  if (ui.clearKey.checked) values.key = '';
+  else if (ui.idKey.value) values.key = ui.idKey.value;
+  applySettings(values);
+});
+
+ui.defaultServer.addEventListener('click', () => {
+  ui.server.value = '';
+  applySettings({ host: '', port: '' });
+});
+
 async function close() {
   const p = port;
   port = null;
@@ -159,6 +223,7 @@ async function close() {
   setConnected(false);
   ui.state.textContent = '미연결';
   for (const el of [ui.deviceName, ui.chip, ui.firmware]) el.textContent = '—';
+  ui.serverSection.hidden = true;
 }
 
 ui.disconnect.addEventListener('click', close);
