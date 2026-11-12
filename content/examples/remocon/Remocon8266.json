@@ -74,7 +74,7 @@
       "to": "서버",
       "tag": "@$info",
       "value": "n=Remocon8266;g=HOME;t=switch3.1",
-      "note": "이름, 분류, 화면 타입입니다. 서버에 보관됩니다."
+      "note": "이름, 분류, 화면 타입입니다. 서버에 보관됩니다. g는 앱이 장치를 묶어 보여 주는 그룹이며 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
     },
     {
       "from": "장치",
@@ -156,7 +156,16 @@
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/Remocon8266",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266/Remocon8266.ino",
   "boardSetup": true,
-  "settings": [],
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    }
+  ],
   "media": [
     {
       "kind": "schematic",

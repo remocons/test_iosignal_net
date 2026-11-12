@@ -57,7 +57,7 @@
   "library": "iosignal",
   "name": "esp01_channel_txrx",
   "draft": true,
-  "approved": false,
+  "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/esp01_channel_txrx",
   "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/esp01_channel_txrx/esp01_channel_txrx.ino",
   "boardSetup": true,

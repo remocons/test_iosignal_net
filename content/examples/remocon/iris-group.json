@@ -74,8 +74,8 @@
       "from": "장치",
       "to": "서버",
       "tag": "#Iris-g0$info",
-      "value": "n=Iris Lights <그룹 번호>;t=switch8.1",
-      "note": "그룹 정보입니다. 서버에 보관됩니다."
+      "value": "n=Iris Lights <그룹 번호>;g=iris G<그룹 번호>;t=switch8.1",
+      "note": "그룹 정보입니다. 서버에 보관됩니다. g는 앱이 묶어 보여 주는 그룹입니다. 보드 설정 group이 비어 있으면 iris G<그룹 번호>입니다."
     },
     {
       "from": "장치",
@@ -124,6 +124,15 @@
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-group",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-group/iris-group.ino",
   "boardSetup": true,
-  "settings": [],
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=, empty: iris G<DIP>)",
+      "kind": "text",
+      "default": "",
+      "flags": [],
+      "maxLength": "32"
+    }
+  ],
   "media": []
 }

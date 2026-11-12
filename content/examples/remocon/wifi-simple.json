@@ -51,8 +51,8 @@
       "from": "장치",
       "to": "서버",
       "tag": "#switch$info",
-      "value": "n=공유 스위치;t=switch3.1",
-      "note": "그룹 정보입니다. 서버에 보관됩니다."
+      "value": "n=공유 스위치;g=HOME;t=switch3.1",
+      "note": "그룹 정보입니다. 서버에 보관됩니다. g는 앱이 장치를 묶어 보여 주는 그룹이며 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
     },
     {
       "from": "장치",
@@ -93,6 +93,15 @@
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/wifi-simple",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/wifi-simple/wifi-simple.ino",
   "boardSetup": true,
-  "settings": [],
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    }
+  ],
   "media": []
 }

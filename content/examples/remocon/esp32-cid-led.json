@@ -37,8 +37,8 @@
       "from": "장치",
       "to": "서버",
       "tag": "@$info",
-      "value": "n=ESP32-LED;g=Tutorial;ui=on,off,toggle",
-      "note": "이름, 분류, 버튼 정보입니다. 서버에 보관됩니다."
+      "value": "n=ESP32-LED;g=HOME;ui=on,off,toggle",
+      "note": "이름, 분류, 버튼 정보입니다. 서버에 보관됩니다. g는 앱이 장치를 묶어 보여 주는 그룹이며 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
     },
     {
       "from": "장치",
@@ -104,6 +104,15 @@
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp32-cid-led",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp32-cid-led/esp32-cid-led.ino",
   "boardSetup": true,
-  "settings": [],
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    }
+  ],
   "media": []
 }

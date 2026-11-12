@@ -1,0 +1,125 @@
+{
+  "title": "ESP32-CAM 카메라",
+  "kind": "device",
+  "summary": "ESP32-CAM이 찍은 사진을 remocon.kr 장치 카드에 보여 줍니다. 공식 타입 camera.1을 쓰고, E2E 키를 넣으면 사진을 끝에서 끝까지 암호화합니다.",
+  "boards": [
+    {
+      "name": "ESP32-CAM (AI Thinker)",
+      "fqbn": "esp32:esp32:esp32cam"
+    }
+  ],
+  "network": "Wi-Fi 2.4GHz 공유기",
+  "app": "https://remocon.kr 장치 카드 (camera.1)",
+  "partners": [],
+  "wiring": [],
+  "setup": [
+    "스케치를 업로드합니다. ESP32-CAM은 USB-TTL 어댑터로 올리고, 올릴 때만 GPIO0을 GND에 연결합니다.",
+    "USB로 연결해 https://test.iosignal.net/wifi/ (보드 설정)에서 Wi-Fi를 넣습니다(데스크톱 Chrome·Edge, 보드가 저장). 같은 페이지에서 다른 IOSignal 서버와 장치 키도 넣을 수 있습니다.",
+    "사진을 암호화하려면 같은 페이지의 스케치 설정 e2e_key에 키를 넣습니다. 보드가 저장하고 다시 보여 주지 않습니다. 비워 두면 평문 JPEG를 보냅니다.",
+    "같은 공유기에 연결한 브라우저로 https://remocon.kr 을 열면 ESP32-CAM 카드에 사진이 나옵니다. 암호화했다면 카드에서 같은 E2E 키를 넣습니다(그 브라우저에만 저장).",
+    "카드의 전송 스위치로 멈추거나 다시 보내고, 간격으로 사진 사이 시간을 바꿉니다."
+  ],
+  "flow": [
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "#search",
+      "value": "구독",
+      "note": "앱의 검색 요청을 받도록 구독합니다."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$info",
+      "value": "n=ESP32-CAM;g=HOME;t=camera.1",
+      "note": "이름, 그룹, 공식 타입입니다. 서버에 보관됩니다. g는 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
+    },
+    {
+      "from": "장치",
+      "to": "서버",
+      "tag": "@$state",
+      "value": "on=1;interval=1000",
+      "note": "전송 중인지와 사진 간격(ms)입니다. 서버에 보관됩니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "#notify",
+      "value": "<cid>",
+      "note": "접속했음을 알리고, #search에도 이렇게 답합니다."
+    },
+    {
+      "from": "앱",
+      "to": "서버",
+      "tag": "<cid>@$info, $state, image",
+      "value": "구독",
+      "note": "카드가 camera.1 화면의 image 위젯을 보고 <cid>@image도 구독합니다."
+    },
+    {
+      "from": "장치",
+      "to": "앱",
+      "tag": "@image",
+      "value": "JPEG (바이너리, E2E 키가 있으면 암호화)",
+      "note": "간격마다 보냅니다. $가 없어 서버에 보관되지 않습니다. 카드는 JPEG면 그대로, 아니면 입력한 키로 풀어 보여 줍니다."
+    },
+    {
+      "from": "앱",
+      "to": "장치",
+      "tag": "<cid>@",
+      "value": "off / on / interval=2000",
+      "note": "interval은 100~60000ms만 받고 보드에 저장합니다. 처리 뒤(거부해도) 상태를 보냅니다."
+    },
+    {
+      "from": "서버",
+      "to": "앱",
+      "tag": "<cid>@$state",
+      "value": "close",
+      "note": "장치가 끊기면 서버가 보내고 카드가 사라집니다."
+    }
+  ],
+  "notes": [
+    "remocon.kr의 공식 타입 camera.1과 image 위젯이 이 예제를 위해 생겼습니다. IOSignal Desktop과 안드로이드 앱은 아직 사진을 보여 주지 않습니다.",
+    "익명 연결은 메시지 하나가 256 KiB, 초당 100건까지입니다. VGA JPEG는 보통 20~40 KB라 기본 1초 간격이면 여유가 있습니다.",
+    "E2E 키가 없으면 CID를 아는 누구나 <cid>@image를 구독해 사진을 볼 수 있습니다. 실제로 쓸 때는 키를 넣습니다.",
+    "카메라 초기화에 실패해도 보드 설정과 접속은 계속 됩니다. 사진만 보내지 않습니다."
+  ],
+  "library": "remocon",
+  "name": "esp32cam",
+  "draft": true,
+  "approved": true,
+  "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp32cam",
+  "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp32cam/esp32cam.ino",
+  "boardSetup": true,
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    },
+    {
+      "name": "e2e_key",
+      "label": "E2E key (empty: plain)",
+      "kind": "text",
+      "default": "",
+      "flags": [
+        "secret"
+      ],
+      "maxLength": "64"
+    },
+    {
+      "name": "interval",
+      "label": "Interval ms (100-60000)",
+      "kind": "int",
+      "default": "1000",
+      "flags": [
+        "remote"
+      ],
+      "min": "100",
+      "max": "60000"
+    }
+  ],
+  "media": []
+}

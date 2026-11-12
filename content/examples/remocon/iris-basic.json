@@ -46,8 +46,8 @@
       "from": "장치",
       "to": "서버",
       "tag": "@$info",
-      "value": "n=Iris Basic;t=switch4.1",
-      "note": "이름과 공식 4구 스위치 타입입니다. 서버에 보관됩니다."
+      "value": "n=Iris Basic;g=HOME;t=switch4.1",
+      "note": "이름과 공식 4구 스위치 타입입니다. 서버에 보관됩니다. g는 앱이 장치를 묶어 보여 주는 그룹이며 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
     },
     {
       "from": "장치",
@@ -105,6 +105,15 @@
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/iris-basic",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/iris-basic/iris-basic.ino",
   "boardSetup": true,
-  "settings": [],
+  "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    }
+  ],
   "media": []
 }

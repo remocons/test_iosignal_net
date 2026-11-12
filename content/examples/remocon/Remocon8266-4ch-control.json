@@ -74,8 +74,8 @@
       "from": "제어기",
       "to": "서버",
       "tag": "@$info",
-      "value": "n=Relay Control;ui=r1,r2,r3,r4,all;p=1",
-      "note": "p=1은 화면을 @$panel로 보낸다는 뜻입니다. ui는 화면을 모르는 앱이 보여 줄 버튼입니다."
+      "value": "n=Relay Control;g=HOME;ui=r1,r2,r3,r4,all;p=1",
+      "note": "p=1은 화면을 @$panel로 보낸다는 뜻입니다. ui는 화면을 모르는 앱이 보여 줄 버튼입니다. g는 앱이 장치를 묶어 보여 주는 그룹이며 보드 설정 group으로 바꿉니다(바꾸면 바로 다시 보냄)."
     },
     {
       "from": "제어기",
@@ -149,6 +149,14 @@
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/Remocon8266-4ch-control/Remocon8266-4ch-control.ino",
   "boardSetup": true,
   "settings": [
+    {
+      "name": "group",
+      "label": "Group (g=)",
+      "kind": "text",
+      "default": "HOME",
+      "flags": [],
+      "maxLength": "32"
+    },
     {
       "name": "target",
       "label": "Target CID",

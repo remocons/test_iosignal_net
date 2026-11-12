@@ -49,7 +49,7 @@
   "library": "iosignal",
   "name": "peer_ping_pong",
   "draft": true,
-  "approved": false,
+  "approved": true,
   "source": "https://github.com/remocons/iosignal-arduino/tree/main/examples/peer_ping_pong",
   "sketch": "https://github.com/remocons/iosignal-arduino/blob/main/examples/peer_ping_pong/peer_ping_pong.ino",
   "boardSetup": true,
