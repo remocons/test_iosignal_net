@@ -1,4 +1,4 @@
-// Writes the generated pages into public/: index.html, lab/index.html, examples/**/index.html.
+// Writes the generated pages into public/: index.html, lab/index.html, wifi/index.html, examples/**/index.html.
 // These files are build output (see .gitignore); edit scripts/site/ and content/ instead.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -21,6 +21,10 @@ export function generate() {
   write('lab/index.html', layout({
     title: '웹 실습실 · IOSignal 실습실', description: '브라우저에서 IOSignal 시그널을 보내고 받는 범용 통신 실습실',
     active: 'lab', body: readFileSync(path.join(root, 'scripts', 'site', 'lab-body.html'), 'utf8'), scripts: ['/lab/lab.js'],
+  }));
+  write('wifi/index.html', layout({
+    title: 'Wi-Fi 설정 · IOSignal 실습실', description: 'USB로 연결한 ESP32·ESP8266 보드의 Wi-Fi 이름과 비밀번호를 브라우저에서 바꿉니다',
+    active: 'wifi', body: readFileSync(path.join(root, 'scripts', 'site', 'wifi-body.html'), 'utf8'), scripts: ['/wifi/wifi.js'],
   }));
   write('examples/index.html', layout({ title: '예제 · IOSignal 실습실', active: 'examples',
     body: '<main class="doc"><p><a href="/">예제 목록으로 이동합니다.</a></p></main><script>location.replace("/")</script>' }));

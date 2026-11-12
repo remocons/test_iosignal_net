@@ -117,3 +117,8 @@ button[aria-pressed=true]{background:#176b52;color:#fff}
   .panel-connect{grid-template-columns:1fr}
   .log-row{grid-template-columns:85px 40px 1fr}.log-row span:last-child{grid-column:1/-1}
 }
+.device-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0 0 14px}
+.device-info div{background:#eef5ef;padding:10px 12px;border-radius:8px}
+.device-info dt{font-size:12px;font-weight:700;color:#367361}.device-info dd{margin:4px 0 0;overflow-wrap:anywhere}
+.warn-box{background:#fff6df;color:#7a5a12;padding:10px 12px;border-radius:8px}
+.serial-log{margin:0;min-height:160px;max-height:360px;overflow:auto;padding:12px;border-radius:8px;background:#1f2a2b;color:#d9e7df;font:12px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere}

@@ -16,6 +16,7 @@ const KIND_ORDER = Object.keys(KINDS);
 export const NAV = [
   ['examples', '/', '예제'],
   ['lab', '/lab/', '웹 실습실'],
+  ['wifi', '/wifi/', 'Wi-Fi 설정'],
   ['webrtc', '/webrtc/', 'WebRTC'],
 ];
 
