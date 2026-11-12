@@ -156,6 +156,10 @@ ui.connect.addEventListener('click', async () => {
   try {
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 115200 });
+    // Browsers open the port with DTR and RTS set. On USB adapters such as the ESP32-CAM-MB either line
+    // holds the board in reset or in its download mode, so it never answers. Releasing both lets it run
+    // (it boots now if it was held; hello() keeps asking for 10 s). Boards that ignore them are unaffected.
+    await port.setSignals({ dataTerminalReady: false, requestToSend: false }).catch(() => {});
   } catch (err) {
     port = null;
     if (err.name !== 'NotFoundError') ui.result.textContent = `포트를 열지 못했습니다: ${err.message}`;
