@@ -1,4 +1,4 @@
-<header class="page-head"><span class="eyebrow">IOSIGNAL / WI-FI 설정</span><h1>USB로 연결해 Wi-Fi만 바꿉니다.</h1><p>ESP32·ESP8266 보드에 이미 올라간 스케치를 다시 빌드하지 않고, 이 페이지에서 Wi-Fi 이름과 비밀번호만 바꿉니다. 보드는 마지막으로 접속한 Wi-Fi를 칩 안에 저장하고, 다음 부팅부터 그 값으로 접속합니다.</p></header>
+<header class="page-head"><span class="eyebrow">IOSIGNAL / 보드 설정</span><h1>USB로 연결해 보드 설정을 바꿉니다.</h1><p>ESP32·ESP8266 보드에 이미 올라간 스케치를 다시 빌드하지 않고 Wi-Fi, IOSignal 서버와 장치 키, 그리고 스케치가 정한 설정 항목(예: 제어 대상 CID)을 이 페이지에서 바꿉니다. 보드는 값을 칩 안에 저장하고 다음 부팅에도 씁니다.</p></header>
 <main class="lab wifi">
 <section><h2>01 보드 연결</h2>
 <p id="unsupported" class="hint warn-box" hidden>이 브라우저는 Web Serial을 지원하지 않습니다. 데스크톱 Chrome이나 Edge에서 여세요. iOS는 지원하지 않습니다.</p>
@@ -9,7 +9,7 @@
 <div><dt>칩</dt><dd id="chip">—</dd></div>
 <div><dt>펌웨어</dt><dd id="firmware">—</dd></div>
 </dl>
-<p class="hint">보드에 <code>IOSignalWiFi</code>를 쓰는 스케치가 올라가 있어야 합니다(Improv Wi-Fi Serial, 115200bps). 시리얼 모니터가 열려 있으면 포트를 쓸 수 없으니 먼저 닫으세요.</p>
+<p class="hint">보드에 <code>IOSignalConfig</code>를 쓰는 스케치가 올라가 있어야 합니다(Improv Wi-Fi Serial, 115200bps). 시리얼 모니터가 열려 있으면 포트를 쓸 수 없으니 먼저 닫으세요.</p>
 </section>
 <section><h2>02 Wi-Fi 입력</h2>
 <form id="wifiForm">
@@ -39,5 +39,11 @@
 <p id="serverResult" role="alert"></p>
 <small>값은 USB로 보드에만 전달됩니다. 보드는 키를 다시 보내지 않고 점(.) 앞의 id만 알려 줍니다. 장치 키는 서버마다 따로 발급되므로 서버를 바꾸면 그 서버에 등록된 키를 함께 넣으세요. 바꾸면 보드가 재시작합니다.</small>
 </section>
-<section class="logs"><div class="log-heading"><h2>04 시리얼 로그</h2><div class="actions"><button id="clearLog" class="secondary">비우기</button></div></div><p class="hint">보드가 출력하는 글입니다. <code>READY CID</code> 줄에서 장치 CID를 확인할 수 있습니다.</p><pre id="serialLog" class="serial-log" aria-label="시리얼 로그"></pre></section>
+<section id="appSection" hidden><h2>04 스케치 설정</h2>
+<p class="hint">이 스케치가 정한 설정 항목입니다. 보드가 알려 준 목록과 규칙대로 입력칸을 만듭니다.</p>
+<form id="appForm" novalidate><div id="appFields" class="app-fields"></div><button id="applyApp">설정 저장</button></form>
+<p id="appResult" role="alert"></p>
+<small>비밀 항목은 보드가 값을 돌려보내지 않습니다. “스케치 기본값으로”는 저장된 값을 지웁니다.</small>
+</section>
+<section class="logs"><div class="log-heading"><h2>05 시리얼 로그</h2><div class="actions"><button id="clearLog" class="secondary">비우기</button></div></div><p class="hint">보드가 출력하는 글입니다. <code>READY CID</code> 줄에서 장치 CID를 확인할 수 있습니다.</p><pre id="serialLog" class="serial-log" aria-label="시리얼 로그"></pre></section>
 </main>

@@ -75,3 +75,26 @@ test('one server field: host or host:port, never a web address', async () => {
   }
   assert.match((() => { try { parseServer('ws://x:1'); } catch (e) { return e.message; } })(), /TCP/);
 });
+
+test('sketch settings: rows, rules and the set packet', async () => {
+  const { decodeAppRow, checkAppValue, appUpdate } = await import('../public/lib/improv.js');
+  const target = decodeAppRow(['target', 'Target CID', 'cid', 'max=12', '?hc21', 'stored', 'remote']);
+  assert.deepEqual([target.name, target.kind, target.max, target.value, target.source, target.remote, target.secret], ['target', 'cid', 12, '?hc21', 'stored', true, false]);
+  const level = decodeAppRow(['level', 'Level', 'int', 'min=-5;max=100', '50', 'sketch', '']);
+  const mode = decodeAppRow(['mode', 'Mode', 'choice', 'options=low|mid|high', 'mid', 'sketch', 'restart']);
+  const on = decodeAppRow(['on', 'On', 'bool', '', '1', 'sketch', '']);
+  const note = decodeAppRow(['note', 'Note', 'text', 'max=5', '', 'sketch', '']);
+  const token = decodeAppRow(['token', '', 'text', 'max=64', '', 'stored', 'secret']);
+  assert.equal(token.label, 'token');
+  assert.ok(mode.restart && token.secret);
+  for (const [row, good, bad] of [[target, '1413', 'a b'], [target, '?8p7m', 'a@b'], [level, '-5', '101'], [level, '100', '1.5'],
+    [mode, 'high', 'HIGH'], [on, '0', 'true'], [note, '한', 'hello!'], [note, 'hello', 'a\nb']]) {
+    assert.equal(checkAppValue(row, good), '', `${row.name} ${good}`);
+    assert.notEqual(checkAppValue(row, bad), '', `${row.name} ${bad}`);
+  }
+  assert.equal(checkAppValue(target, ''), ''); // back to the default
+  const p = appUpdate([[target, '1413'], [level, '']]);
+  assert.deepEqual([...p.slice(9, -2)], [0xa3, 6 + 1 + 1 + 4 + 1 + 5 + 1, 6, ...ascii('target'), 4, ...ascii('1413'), 5, ...ascii('level'), 0]);
+  assert.throws(() => appUpdate([]), RangeError);
+  assert.throws(() => appUpdate([[level, '999']]), RangeError);
+});

@@ -16,7 +16,7 @@ const KIND_ORDER = Object.keys(KINDS);
 export const NAV = [
   ['examples', '/', '예제'],
   ['lab', '/lab/', '웹 실습실'],
-  ['wifi', '/wifi/', 'Wi-Fi 설정'],
+  ['wifi', '/wifi/', '보드 설정'],
   ['webrtc', '/webrtc/', 'WebRTC'],
 ];
 
@@ -185,9 +185,9 @@ export function renderInstall(ex, firmware) {
 <p class="badges">${boards}<span class="badge">버전 <code>${esc(firmware.version)}</code></span></p>
 <esp-web-install-button manifest="${esc(manifest)}"><button slot="activate" class="button">이 보드에 설치</button><span slot="unsupported" class="hint warn-box">이 브라우저는 Web Serial을 지원하지 않습니다. 데스크톱 Chrome이나 Edge에서 여세요.</span><span slot="not-allowed" class="hint warn-box">HTTPS 주소에서만 설치할 수 있습니다.</span></esp-web-install-button>
 <ul class="hint install-notes">
-<li>이미 IOSignal Wi-Fi 설정을 쓰는 펌웨어가 있으면 <b>업데이트</b>로 설치되고 저장된 Wi-Fi가 그대로 남습니다.</li>
+<li>이미 IOSignal 보드 설정을 쓰는 펌웨어가 있으면 <b>업데이트</b>로 설치되고 저장된 Wi-Fi가 그대로 남습니다.</li>
 <li>다른 펌웨어가 있으면 “Erase device” 확인 창이 나옵니다. 체크하지 않으면 칩에 저장된 Wi-Fi를 지우지 않습니다. 체크하면 모두 지우고 Wi-Fi를 다시 넣습니다.</li>
-<li>Wi-Fi만 바꾸려면 <a href="/wifi/">Wi-Fi 설정</a> 페이지를 쓰세요. 시리얼 모니터가 포트를 쓰고 있으면 먼저 닫습니다.</li>
+<li>Wi-Fi·서버·장치 키나 스케치 설정만 바꾸려면 <a href="/wifi/">보드 설정</a> 페이지를 쓰세요. 시리얼 모니터가 포트를 쓰고 있으면 먼저 닫습니다.</li>
 <li>펌웨어에는 Wi-Fi 비밀번호나 장치 키가 들어 있지 않습니다. 익명 CID로 접속합니다.</li>
 </ul></section>`;
 }

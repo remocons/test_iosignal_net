@@ -127,3 +127,9 @@ button[aria-pressed=true]{background:#176b52;color:#fff}
 esp-web-install-button{display:inline-block;margin:4px 0}
 .check-row{display:flex;align-items:center;gap:8px;font-weight:400}
 .check-row input{width:auto;margin:0}
+.app-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:14px}
+.app-field{border:1px solid #dbe3d8;border-radius:10px;padding:10px 14px;margin:0;min-width:0}
+.app-field legend{font-weight:700;padding:0 4px}
+.app-now{margin:0 0 8px;font-size:13px;color:#4d5d57;overflow-wrap:anywhere}
+.app-field input:invalid{border-color:#c0392b}
+#appSection{grid-column:1/-1}

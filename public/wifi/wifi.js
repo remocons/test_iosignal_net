@@ -1,5 +1,6 @@
-// Sets Wi-Fi on an ESP32/ESP8266 board over USB (Web Serial + Improv Wi-Fi Serial).
-import { COMMAND, ERROR, Parser, STATE, TYPE, decodeResult, decodeSettings, parseServer, rpc, settingsUpdate, wifiSettings } from '/lib/improv.js';
+// Board settings over USB (Web Serial + Improv Wi-Fi Serial): Wi-Fi, IOSignal server and key,
+// and the sketch's own settings that an IOSignalConfig board lists.
+import { COMMAND, ERROR, Parser, STATE, TYPE, appUpdate, checkAppValue, decodeAppRow, decodeResult, decodeSettings, parseServer, rpc, settingsUpdate, wifiSettings } from '/lib/improv.js';
 
 const $ = (id) => document.getElementById(id);
 const ui = {
@@ -10,7 +11,10 @@ const ui = {
   serverSection: $('serverSection'), serverForm: $('serverForm'), server: $('server'), idKey: $('idKey'),
   clearKey: $('clearKey'), defaultServer: $('defaultServer'), applyServer: $('applyServer'), serverResult: $('serverResult'),
   currentServer: $('currentServer'), currentKey: $('currentKey'), noStorage: $('noStorage'),
+  appSection: $('appSection'), appForm: $('appForm'), appFields: $('appFields'), applyApp: $('applyApp'), appResult: $('appResult'),
 };
+// Commands whose answer is several results ended by an empty one.
+const LIST_COMMANDS = new Set([COMMAND.SCAN, COMMAND.LIST_APP, COMMAND.SET_APP]);
 const SOURCE = { stored: '브라우저에서 저장', sketch: '스케치 기본값' };
 const STATE_TEXT = {
   ready: '연결됨 · Wi-Fi 미접속', provisioning: 'Wi-Fi 접속 시도 중…', provisioned: '연결됨 · Wi-Fi 접속됨',
@@ -26,11 +30,21 @@ let reader = null;
 let parser = null;
 let improvSeen = false;
 let pending = null; // { command, resolve, reject, timer }
-let scanRows = [];
+let listRows = [];  // rows of the list command being answered
+let appRows = [];   // the sketch settings last listed by the board
 
 if (!('serial' in navigator)) {
   $('unsupported').hidden = false;
   ui.connect.disabled = true;
+}
+
+// The board prints this right before it restarts after saving settings.
+function onLogLine(line) {
+  log(line);
+  if (line.includes('settings saved, restarting')) {
+    ui.state.textContent = '재시작 중…';
+    setTimeout(() => { if (port) hello(); }, 3000);
+  }
 }
 
 function log(line) {
@@ -62,6 +76,7 @@ function request(command, data = [], timeout = 3000) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => { pending = null; reject(new Error('timeout')); }, timeout);
     pending = { command, resolve, reject, timer };
+    if (LIST_COMMANDS.has(command)) listRows = [];
     const bytes = data instanceof Uint8Array ? data : rpc(command, data); // a ready packet, or RPC data
     write(bytes).catch((err) => { clearTimeout(timer); pending = null; reject(err); });
   });
@@ -86,9 +101,9 @@ function onPacket(type, data) {
     if (name && pending) settle('reject', new Error(name));
   } else if (type === TYPE.RESULT) {
     const { command, strings } = decodeResult(data);
-    if (command === COMMAND.SCAN) {
-      if (strings.length) { scanRows.push(strings); return; }
-      if (pending?.command === COMMAND.SCAN) settle('resolve', scanRows);
+    if (LIST_COMMANDS.has(command)) {
+      if (strings.length) { listRows.push(strings); return; }
+      if (pending?.command === command) settle('resolve', listRows);
     } else if (pending?.command === command) settle('resolve', strings);
   }
 }
@@ -101,7 +116,7 @@ async function readLoop() {
         const { value, done } = await reader.read();
         if (done) break;
         for (const e of parser.push(value)) {
-          if (e.kind === 'text') log(e.text);
+          if (e.kind === 'text') onLogLine(e.text);
           else onPacket(e.type, e.data);
         }
       }
@@ -125,6 +140,7 @@ async function hello() {
       ui.chip.textContent = chip || '—';
       ui.firmware.textContent = [firmware, version].filter(Boolean).join(' ') || '—';
       await loadSettings();
+      await loadApp();
       return;
     } catch (err) {
       if (err.message !== 'timeout') { log(`[요청 오류] ${err.message}`); return; }
@@ -132,7 +148,7 @@ async function hello() {
   }
   if (port && !improvSeen) {
     ui.state.textContent = '응답 없음';
-    ui.result.textContent = '보드가 Wi-Fi 설정 요청에 답하지 않습니다. IOSignalWiFi를 쓰는 스케치인지, 속도가 115200인지 확인하세요. 보드 재시작을 눌러 볼 수도 있습니다.';
+    ui.result.textContent = '보드가 Wi-Fi 설정 요청에 답하지 않습니다. IOSignalConfig를 쓰는 스케치인지, 속도가 115200인지 확인하세요. 보드 재시작을 눌러 볼 수도 있습니다.';
   }
 }
 
@@ -154,7 +170,7 @@ ui.connect.addEventListener('click', async () => {
   hello();
 });
 
-// IOSignal server and key (IOSignalWiFi firmware only; older firmware answers "unknown command").
+// IOSignal server and key (IOSignalConfig firmware only; older firmware answers "unknown command").
 function showSettings(st) {
   ui.currentServer.textContent = `${st.host}:${st.port} (${st.hostSource === 'stored' || st.portSource === 'stored' ? SOURCE.stored : SOURCE.sketch})`;
   ui.currentKey.textContent = st.keySource === 'none' ? '없음 · 익명 접속' : `id ${st.keyId} (${SOURCE[st.keySource] ?? st.keySource})`;
@@ -184,8 +200,6 @@ async function applySettings(values) {
     showSettings(st);
     ui.server.value = '';
     ui.serverResult.textContent = '저장했습니다. 보드가 재시작합니다. 시리얼 로그에서 접속을 확인하세요.';
-    ui.state.textContent = '재시작 중…';
-    setTimeout(() => { if (port) hello(); }, 3000);
   } catch (err) {
     ui.serverResult.textContent = err.message === 'timeout' ? '보드가 응답하지 않습니다.'
       : err.message === 'invalid' ? '보드가 값을 받지 않았습니다. 형식을 확인하세요.'
@@ -213,6 +227,96 @@ ui.defaultServer.addEventListener('click', () => {
   applySettings({ host: '', port: '' });
 });
 
+// ---- Sketch settings (0xA2 / 0xA3) ----
+const KIND_TEXT = { text: '글자', cid: 'CID', int: '정수', bool: '켜기/끄기', choice: '선택' };
+
+function el(tag, attrs = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === undefined || v === false) continue;
+    if (k === 'text') node.textContent = v; else node.setAttribute(k, v === true ? '' : v);
+  }
+  node.append(...children);
+  return node;
+}
+
+// One field per setting. Empty input or "(바꾸지 않음)" leaves it; "기본값으로" clears the stored value.
+function inputFor(row) {
+  const id = `app-${row.name}`;
+  if (row.kind === 'bool' || row.kind === 'choice') {
+    const values = row.kind === 'bool' ? [['1', '켜기 (1)'], ['0', '끄기 (0)']] : row.options.map((o) => [o, o]);
+    return el('select', { id, 'data-name': row.name }, el('option', { value: '', text: '(바꾸지 않음)' }),
+      ...values.map(([v, label]) => el('option', { value: v, text: label })));
+  }
+  const attrs = { id, 'data-name': row.name, autocomplete: 'off', placeholder: '비워 두면 바꾸지 않습니다' };
+  if (row.kind === 'int') Object.assign(attrs, { inputmode: 'numeric', placeholder: `${row.min} ~ ${row.max}` });
+  if (row.kind === 'cid') attrs.maxlength = 12;
+  if (row.secret) attrs.type = 'password';
+  return el('input', attrs);
+}
+
+function renderApp(rows) {
+  appRows = rows;
+  ui.appFields.replaceChildren(...rows.map((row) => {
+    const now = row.secret ? (row.source === 'stored' ? '저장됨 (값은 보이지 않음)' : '없음') : (row.value || '(빈 값)');
+    const notes = [KIND_TEXT[row.kind] ?? row.kind, row.kind === 'text' && row.max ? `${row.max}바이트까지` : '',
+      row.remote ? '원격 명령으로도 바뀜' : '', row.restart ? '바꾸면 재시작' : ''].filter(Boolean).join(' · ');
+    const reset = el('input', { type: 'checkbox', 'data-reset': row.name, disabled: row.source !== 'stored' });
+    return el('fieldset', { class: 'app-field' },
+      el('legend', { text: row.label }),
+      el('p', { class: 'app-now' }, el('code', { text: row.name }), ` 현재: ${now} (${SOURCE[row.source] ?? row.source})`),
+      el('label', {}, `새 값`, inputFor(row)),
+      el('label', { class: 'check-row' }, reset, ' 스케치 기본값으로'),
+      el('small', { text: notes }));
+  }));
+  ui.appSection.hidden = rows.length === 0;
+}
+
+async function loadApp() {
+  try {
+    renderApp((await request(COMMAND.LIST_APP)).map(decodeAppRow));
+  } catch (err) {
+    ui.appSection.hidden = true; // older firmware ("unknown command") or no settings
+    if (err.message !== 'unknown-command' && err.message !== 'timeout') log(`[스케치 설정 읽기 오류] ${err.message}`);
+  }
+}
+
+ui.appForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const changes = [];
+  for (const row of appRows) {
+    const reset = ui.appForm.querySelector(`[data-reset="${row.name}"]`);
+    const input = ui.appForm.querySelector(`[data-name="${row.name}"]`);
+    if (reset?.checked) changes.push([row, '']);
+    else if (input?.value !== '') changes.push([row, input.value.trim()]);
+  }
+  let bytes;
+  try { bytes = appUpdate(changes); } catch (err) { ui.appResult.textContent = err.message; return; }
+  ui.applyApp.disabled = true;
+  ui.appResult.textContent = '보드에 보냈습니다…';
+  try {
+    renderApp((await request(COMMAND.SET_APP, bytes, 5000)).map(decodeAppRow));
+    const restart = changes.some(([row]) => row.restart);
+    ui.appResult.textContent = restart ? '저장했습니다. 보드가 재시작합니다.' : '저장했습니다. 보드가 바로 적용합니다(그렇게 만들지 않은 스케치는 재시작합니다).';
+  } catch (err) {
+    ui.appResult.textContent = err.message === 'timeout' ? '보드가 응답하지 않습니다.'
+      : err.message === 'invalid' ? '보드가 값을 받지 않았습니다. 형식을 확인하세요.'
+      : err.message === 'unknown' ? '보드가 저장하지 못했습니다.' : (ERROR_TEXT[err.message] ?? err.message);
+  } finally {
+    ui.applyApp.disabled = !port;
+  }
+});
+
+// Each field shows its own rule problem as it is typed.
+ui.appForm.addEventListener('input', (event) => {
+  const name = event.target.dataset?.name;
+  const row = appRows.find((r) => r.name === name);
+  if (!row) return;
+  const problem = checkAppValue(row, event.target.value.trim());
+  event.target.setCustomValidity(problem);
+  ui.appResult.textContent = problem;
+});
+
 async function close() {
   const p = port;
   port = null;
@@ -224,6 +328,7 @@ async function close() {
   ui.state.textContent = '미연결';
   for (const el of [ui.deviceName, ui.chip, ui.firmware]) el.textContent = '—';
   ui.serverSection.hidden = true;
+  ui.appSection.hidden = true;
 }
 
 ui.disconnect.addEventListener('click', close);
@@ -248,7 +353,6 @@ ui.reset.addEventListener('click', async () => {
 ui.scan.addEventListener('click', async () => {
   ui.scan.disabled = true;
   ui.result.textContent = '주변 Wi-Fi를 찾는 중…';
-  scanRows = [];
   try {
     const rows = await request(COMMAND.SCAN, [], 15000);
     const best = new Map();

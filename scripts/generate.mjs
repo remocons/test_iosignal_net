@@ -23,7 +23,7 @@ export function generate() {
     active: 'lab', body: readFileSync(path.join(root, 'scripts', 'site', 'lab-body.html'), 'utf8'), scripts: ['/lab/lab.js'],
   }));
   write('wifi/index.html', layout({
-    title: 'Wi-Fi 설정 · IOSignal 실습실', description: 'USB로 연결한 ESP32·ESP8266 보드의 Wi-Fi 이름과 비밀번호를 브라우저에서 바꿉니다',
+    title: '보드 설정 · IOSignal 실습실', description: 'USB로 연결한 ESP32·ESP8266 보드의 Wi-Fi, 서버, 장치 키와 스케치 설정을 브라우저에서 바꿉니다',
     active: 'wifi', body: readFileSync(path.join(root, 'scripts', 'site', 'wifi-body.html'), 'utf8'), scripts: ['/wifi/wifi.js'],
   }));
   write('examples/index.html', layout({ title: '예제 · IOSignal 실습실', active: 'examples',
