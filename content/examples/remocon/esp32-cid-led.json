@@ -100,7 +100,7 @@
   "library": "remocon",
   "name": "esp32-cid-led",
   "draft": false,
-  "approved": false,
+  "approved": true,
   "source": "https://github.com/remocons/remocon-arduino/tree/main/examples/esp32-cid-led",
   "sketch": "https://github.com/remocons/remocon-arduino/blob/main/examples/esp32-cid-led/esp32-cid-led.ino",
   "boardSetup": true,
