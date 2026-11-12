@@ -83,3 +83,23 @@ test('install section appears only with a prebuilt firmware', async () => {
   assert.match(html, /src="\/example\/install.js"/);
   assert.doesNotMatch(renderExample(ex, {}), /esp-web-install-button|install\.js/);
 });
+
+test('board settings section lists the sketch settings', async () => {
+  const { renderExample, renderBoardSetup } = await import('../scripts/site/pages.mjs');
+  const ex = {
+    library: 'remocon', name: 'demo', title: 'Demo', summary: 's', kind: 'device', boards: [{ name: 'ESP8266', fqbn: 'esp8266:esp8266:d1_mini' }],
+    sketch: 'https://example.invalid/s', source: 'https://example.invalid/f', boardSetup: true,
+    settings: [
+      { name: 'target', label: 'Target <CID>', kind: 'cid', default: 'the-cid', flags: ['remote'] },
+      { name: 'level', label: 'Level', kind: 'int', default: '50', flags: ['restart'], min: '0', max: '100' },
+      { name: 'token', label: 'Token', kind: 'text', default: '', flags: ['secret'] },
+    ],
+  };
+  const html = renderExample(ex);
+  assert.match(html, /<section id="board-setup">/);
+  assert.match(html, /<code>target<\/code>.*Target &lt;CID&gt;.*CID.*<code>the-cid<\/code>.*원격 명령으로도 바뀜/s);
+  assert.match(html, /정수, 0~100/);
+  assert.match(html, /href="\/wifi\/"/);
+  assert.equal(renderBoardSetup({ ...ex, boardSetup: false }), '');
+  assert.doesNotMatch(renderBoardSetup({ ...ex, settings: [] }), /<table/);
+});

@@ -192,6 +192,23 @@ export function renderInstall(ex, firmware) {
 </ul></section>`;
 }
 
+const SETTING_KIND = { text: '글자', cid: 'CID', int: '정수', bool: '켜기/끄기 (1/0)', choice: '선택' };
+const SETTING_FLAG = { remote: '원격 명령으로도 바뀜', secret: '값을 보여 주지 않음', restart: '바꾸면 재시작' };
+
+// Examples using IOSignalConfig: what the board settings page (/wifi/) can change on this board.
+export function renderBoardSetup(ex) {
+  if (!ex.boardSetup) return '';
+  const settings = ex.settings ?? [];
+  const rule = (s) => [SETTING_KIND[s.kind] ?? s.kind, s.min !== undefined ? `${s.min}~${s.max}` : '',
+    s.options ? s.options.join(' · ') : '', s.maxLength ? `${s.maxLength}바이트까지` : ''].filter(Boolean).join(', ');
+  const rows = settings.map((s) => [`<code>${esc(s.name)}</code>`, esc(s.label), esc(rule(s)),
+    s.default ? `<code>${esc(s.default)}</code>` : '<span class="hint">없음</span>', esc(s.flags.map((f) => SETTING_FLAG[f] ?? f).join(', '))]);
+  return `<section id="board-setup"><h2>보드 설정</h2>
+<p>이 예제는 USB로 연결한 뒤 <a href="/wifi/">보드 설정</a> 페이지에서 Wi-Fi, IOSignal 서버(호스트:포트)와 장치 키${settings.length ? ', 그리고 아래 설정 항목' : ''}을 바꿀 수 있습니다. 스케치를 다시 빌드하지 않아도 되고, 보드가 값을 저장합니다.</p>
+${settings.length ? table(['이름', '설명', '형식', '기본값', '참고'], rows) : ''}
+<div class="actions"><a class="button secondary" href="/wifi/">보드 설정 열기</a></div></section>`;
+}
+
 export function renderExample(ex, types = {}, firmware = null) {
   const panel = panelConfig(ex, types);
   const lib = LIBRARIES[ex.library];
@@ -209,6 +226,7 @@ export function renderExample(ex, types = {}, firmware = null) {
     ? table(['보드 핀', '연결', '비고'], ex.wiring.map((w) => [`<code>${esc(w.pin)}</code>`, esc(w.part), esc(w.note)]))
     : '<p>따로 배선할 부품이 없습니다.</p>'}</section>`);
   if (firmware) sections.push(renderInstall(ex, firmware));
+  if (ex.boardSetup) sections.push(renderBoardSetup(ex));
   if (ex.setup?.length) sections.push(`<section id="steps"><h2>사용 순서</h2><ol class="steps">${ex.setup.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></section>`);
   sections.push(renderPanel(ex, panel));
   if (ex.flow?.length) sections.push(`<section id="flow"><h2>시그널 흐름</h2>${table(['보내는 쪽', '받는 쪽', '태그', '값', '설명'],
